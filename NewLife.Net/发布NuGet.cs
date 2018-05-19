@@ -1,1 +1,1 @@
-//include=..\..\Src\发布NuGet.cs
+//include=..\发布NuGet.cs
