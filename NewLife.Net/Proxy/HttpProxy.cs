@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Net;
-using System.Net.Sockets;
 using System.Runtime.InteropServices;
 using Microsoft.Win32;
 using NewLife.Net.Http;
@@ -11,7 +10,7 @@ namespace NewLife.Net.Proxy
 {
     /// <summary>Http代理。可用于代理各种Http通讯请求。</summary>
     /// <remarks>Http代理请求与普通请求唯一的不同就是Uri，Http代理请求收到的是可能包括主机名的完整Uri</remarks>
-    public class HttpProxy : ProxyBase<HttpProxy.Session>
+    public class HttpProxy : ProxyBase
     {
         #region 构造
         /// <summary>实例化</summary>
@@ -42,11 +41,9 @@ namespace NewLife.Net.Proxy
         /// <param name="kind"></param>
         /// <param name="he"></param>
         /// <returns>返回是否取消操作</returns>
-        Boolean RaiseEvent(HttpProxy.Session session, EventKind kind, HttpProxyEventArgs he)
+        Boolean RaiseEvent(Session session, EventKind kind, HttpProxyEventArgs he)
         {
-            var handler = GetHandler(kind);
-
-            if (handler != null) handler(session, he);
+            GetHandler(kind)?.Invoke(session, he);
 
             return he.Cancel;
         }
@@ -87,8 +84,13 @@ namespace NewLife.Net.Proxy
         #endregion
 
         #region 会话
+        /// <summary>创建会话</summary>
+        /// <param name="session"></param>
+        /// <returns></returns>
+        protected override INetSession CreateSession(ISocketSession session) => new Session();
+
         /// <summary>Http反向代理会话</summary>
-        public class Session : ProxySession<HttpProxy, Session>
+        public class Session : ProxySession
         {
             /// <summary>当前正在处理的请求。一个连接同时只能处理一个请求，除非是Http 1.2</summary>
             HttpHeader UnFinishedRequest;
@@ -110,6 +112,7 @@ namespace NewLife.Net.Proxy
                     return;
                 }
 
+                var pxy = Server as HttpProxy;
                 #region 解析请求头
                 // 解析请求头。
                 var stream = e.Stream;
@@ -124,7 +127,7 @@ namespace NewLife.Net.Proxy
                     {
                         // 分析失败？这个可能不是Http请求头
                         var he = new HttpProxyEventArgs(Request, stream);
-                        if (Proxy.RaiseEvent(this, EventKind.OnRequestBody, he)) return;
+                        if (pxy.RaiseEvent(this, EventKind.OnRequestBody, he)) return;
                         //e.Stream = he.Stream;
                         e.Data = he.Stream.ReadBytes();
 
@@ -153,7 +156,7 @@ namespace NewLife.Net.Proxy
                 {
                     // 否则，头部已完成，现在就是内容，直接转发
                     var he = new HttpProxyEventArgs(Request, stream);
-                    if (Proxy.RaiseEvent(this, EventKind.OnRequestBody, he)) return;
+                    if (pxy.RaiseEvent(this, EventKind.OnRequestBody, he)) return;
                     //e.Stream = he.Stream;
                     e.Data = he.Stream.ReadBytes();
 
@@ -172,9 +175,11 @@ namespace NewLife.Net.Proxy
                 // 现在所在位置是一个全新的请求
                 var rs = OnRequest(entity, e);
                 {
-                    var he = new HttpProxyEventArgs(Request, stream);
-                    he.Cancel = !rs;
-                    rs = !Proxy.RaiseEvent(this, EventKind.OnRequest, he);
+                    var he = new HttpProxyEventArgs(Request, stream)
+                    {
+                        Cancel = !rs
+                    };
+                    rs = !pxy.RaiseEvent(this, EventKind.OnRequest, he);
                 }
                 if (!rs) return;
 
@@ -182,7 +187,7 @@ namespace NewLife.Net.Proxy
                 if (stream.Position < stream.Length)
                 {
                     var he = new HttpProxyEventArgs(Request, stream);
-                    if (Proxy.RaiseEvent(this, EventKind.OnRequestBody, he)) return;
+                    if (pxy.RaiseEvent(this, EventKind.OnRequestBody, he)) return;
                     stream = he.Stream;
                 }
 
@@ -271,6 +276,7 @@ namespace NewLife.Net.Proxy
             Boolean ProcessConnect(HttpHeader entity, ReceivedEventArgs e)
             {
                 //WriteDebugLog("[{3}] {0} {1} [{2}]", entity.Method, entity.Url, entity.ContentLength, ID);
+                var pxy = Server as HttpProxy;
 
                 //var host = entity.Url.ToString();
                 var uri = RemoteServerUri;
@@ -278,7 +284,7 @@ namespace NewLife.Net.Proxy
                 uri.EndPoint = ep;
 
                 // 不要连自己，避免死循环
-                if (ep.Port == Proxy.Server.Port &&
+                if (ep.Port == pxy.Server.Port &&
                     (ep.Address == IPAddress.Loopback || ep.Address == IPAddress.IPv6Loopback))
                 {
                     WriteLog("不要连自己，避免死循环");
@@ -286,8 +292,10 @@ namespace NewLife.Net.Proxy
                     return false;
                 }
 
-                var rs = new HttpHeader();
-                rs.Version = entity.Version;
+                var rs = new HttpHeader
+                {
+                    Version = entity.Version
+                };
                 try
                 {
                     // 连接远程服务器，启动数据交换
@@ -313,12 +321,13 @@ namespace NewLife.Net.Proxy
             /// <returns></returns>
             protected virtual Boolean GetCache(HttpHeader entity, ReceivedEventArgs e)
             {
-                if (!Proxy.EnableCache || entity == null) return false;
+                var pxy = Server as HttpProxy;
+                if (!pxy.EnableCache || entity == null) return false;
 
                 if (entity.Method.EqualIgnoreCase("GET"))
                 {
                     // 查找缓存
-                    var citem = Proxy.Cache.GetItem(entity.RawUrl);
+                    var citem = pxy.Cache.GetItem(entity.RawUrl);
                     if (citem != null)
                     {
                         // 响应缓存
@@ -357,8 +366,9 @@ namespace NewLife.Net.Proxy
             /// <returns>修改后的数据</returns>
             protected override void OnReceiveRemote(ReceivedEventArgs e)
             {
-                var parseHeader = Proxy.EnableCache || Proxy.GetHandler(EventKind.OnResponse) != null;
-                var parseBody = Proxy.EnableCache || Proxy.GetHandler(EventKind.OnResponseBody) != null;
+                var pxy = Server as HttpProxy;
+                var parseHeader = pxy.EnableCache || pxy.GetHandler(EventKind.OnResponse) != null;
+                var parseBody = pxy.EnableCache || pxy.GetHandler(EventKind.OnResponseBody) != null;
 
                 var entity = UnFinishedResponse;
                 var stream = e.Stream;
@@ -374,7 +384,7 @@ namespace NewLife.Net.Proxy
                         if (entity == null)
                         {
                             var he = new HttpProxyEventArgs(Response, stream);
-                            if (Proxy.RaiseEvent(this, EventKind.OnResponseBody, he)) return;
+                            if (pxy.RaiseEvent(this, EventKind.OnResponseBody, he)) return;
                             //e.Stream = he.Stream;
                             e.Data = he.Stream.ReadBytes();
 
@@ -415,7 +425,7 @@ namespace NewLife.Net.Proxy
                         #region 未完成响应的头部已完成？似乎不大可能
                         // 否则，头部已完成，现在就是内容
                         var he = new HttpProxyEventArgs(Response, stream);
-                        if (Proxy.RaiseEvent(this, EventKind.OnResponseBody, he)) return;
+                        if (pxy.RaiseEvent(this, EventKind.OnResponseBody, he)) return;
                         base.OnReceiveRemote(e);
                         //e.Stream = he.Stream;
                         e.Data = he.Stream.ReadBytes();
@@ -440,18 +450,18 @@ namespace NewLife.Net.Proxy
 
                     {
                         var he = new HttpProxyEventArgs(entity, stream);
-                        if (Proxy.RaiseEvent(this, EventKind.OnResponse, he)) return;
+                        if (pxy.RaiseEvent(this, EventKind.OnResponse, he)) return;
                         stream = he.Stream;
                     }
 
                     // 写入头部扩展
-                    entity.Headers["Powered-By-Proxy"] = Proxy.Name;
+                    entity.Headers["Powered-By-Proxy"] = pxy.Name;
                     entity.Headers["RequestTime"] = RequestTime.ToString("yyyy-MM-dd HH:mm:ss.fff");
                     entity.Headers["TotalTime"] = (DateTime.Now - RequestTime).ToString();
                 }
 
                 #region 缓存
-                if (Proxy.EnableCache) SetCache(Response, e);
+                if (pxy.EnableCache) SetCache(Response, e);
                 #endregion
 
                 #region 重构响应包
@@ -463,7 +473,7 @@ namespace NewLife.Net.Proxy
                     if (parseBody && stream.Position < stream.Length)
                     {
                         var he = new HttpProxyEventArgs(Response, stream);
-                        if (Proxy.RaiseEvent(this, EventKind.OnResponseBody, he)) return;
+                        if (pxy.RaiseEvent(this, EventKind.OnResponseBody, he)) return;
                         stream = he.Stream;
                     }
 
@@ -509,12 +519,14 @@ namespace NewLife.Net.Proxy
                 var response = entity;
                 if (request == null || response == null) return false;
 
+                var pxy = Server as HttpProxy;
+                var cache = pxy.Cache;
                 if (request.Method.EqualIgnoreCase("GET"))
                 {
                     if (response.StatusCode == 304)
                     {
                         response.Headers["HttpProxyCache"] = "304";
-                        cacheItem = Proxy.Cache.Add(request, response);
+                        cacheItem = cache.Add(request, response);
                         return true;
                     }
 
@@ -522,7 +534,7 @@ namespace NewLife.Net.Proxy
                     if (!String.IsNullOrEmpty(url) && url[url.Length - 1] != '/' && cacheSuffix.Contains(Path.GetExtension(url)))
                     {
                         response.Headers["HttpProxyCache"] = Path.GetExtension(url);
-                        cacheItem = Proxy.Cache.Add(request, response);
+                        cacheItem = cache.Add(request, response);
                         return true;
                     }
 
@@ -533,7 +545,7 @@ namespace NewLife.Net.Proxy
                         if (p < 0 || cacheContentType.Contains(contentType.Substring(0, p)))
                         {
                             response.Headers["HttpProxyCache"] = contentType;
-                            cacheItem = Proxy.Cache.Add(request, response);
+                            cacheItem = cache.Add(request, response);
                             return true;
                         }
                     }

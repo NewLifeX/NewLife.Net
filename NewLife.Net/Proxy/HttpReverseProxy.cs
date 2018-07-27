@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Diagnostics;
 using System.IO;
 using NewLife.Net.Http;
 
@@ -37,14 +36,11 @@ namespace NewLife.Net.Proxy
         /// <summary>创建会话</summary>
         /// <param name="session"></param>
         /// <returns></returns>
-        protected override INetSession CreateSession(ISocketSession session)
-        {
-            return new Session();
-        }
+        protected override INetSession CreateSession(ISocketSession session) => new Session();
 
         #region 会话
         /// <summary>Http反向代理会话</summary>
-        class Session : NATSession
+        class Session : ProxySession
         {
             ///// <summary>代理对象</summary>
             //public new HttpReverseProxy Proxy { get { return base.Proxy as HttpReverseProxy; } set { base.Proxy = value; } }
@@ -77,9 +73,10 @@ namespace NewLife.Net.Proxy
                 WriteLog("{3}请求：{0} {1} [{2}]", entity.Method, entity.Url, entity.ContentLength, ID);
 
                 Request = entity;
-                if (OnRequest != null) OnRequest(this, e);
+                OnRequest?.Invoke(this, e);
 
-                var host = entity.Url.IsAbsoluteUri ? entity.Url.Host : Proxy.RemoteServer.Host;
+                var pxy = Server as HttpReverseProxy;
+                var host = entity.Url.IsAbsoluteUri ? entity.Url.Host : pxy.RemoteServer.Host;
                 Host = host;
                 RawHost = entity.Host;
                 entity.Host = host;

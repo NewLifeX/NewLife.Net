@@ -1,11 +1,9 @@
 ﻿using System;
-using System.Net.Sockets;
-using NewLife.Net.Sockets;
 
 namespace NewLife.Net.Proxy
 {
     /// <summary>通用NAT代理。所有收到的数据，都转发到指定目标</summary>
-    public class NATProxy : ProxyBase<NATSession>
+    public class NATProxy : ProxyBase
     {
         #region 属性
         /// <summary>远程服务器地址</summary>
@@ -26,11 +24,7 @@ namespace NewLife.Net.Proxy
         /// <param name="port">目标服务器端口</param>
         /// <param name="protocol">协议</param>
         public NATProxy(String hostname, Int32 port, NetType protocol)
-            : this()
-        {
-            RemoteServer = new NetUri(protocol, hostname, port);
-            //RemoteServer.Host = hostname;
-        }
+            : this() => RemoteServer = new NetUri(protocol, hostname, port);
         #endregion
 
         #region 方法
@@ -58,7 +52,4 @@ namespace NewLife.Net.Proxy
         }
         #endregion
     }
-
-    /// <summary>NAT会话</summary>
-    public class NATSession : ProxySession<NATProxy, NATSession> { }
 }

@@ -31,10 +31,12 @@ using System.Runtime.InteropServices;
 // 可以指定所有这些值，也可以使用“内部版本号”和“修订号”的默认值，
 // 方法是按如下所示使用“*”:
 // [assembly: AssemblyVersion("1.0.*")]
-[assembly: AssemblyVersion("3.2.*")]
-[assembly: AssemblyFileVersion("3.2.2016.0204")]
+[assembly: AssemblyVersion("3.3.*")]
+[assembly: AssemblyFileVersion("3.3.2018.0727")]
 
 /*
+ * v3.3.2018.0727   代理类默认接受客户端连接时，建立到远程服务器的连接
+ * 
  * v3.2.2016.0204   增加网络统计，包括会话、发送、接收
  * 
  * v3.1.2015.0511   增加日志服务器LogServer，用于接收网络日志

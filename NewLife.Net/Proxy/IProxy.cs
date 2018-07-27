@@ -1,4 +1,5 @@
-﻿
+﻿using System;
+
 namespace NewLife.Net.Proxy
 {
     /// <summary>数据转发代理接口</summary>
@@ -13,6 +14,9 @@ namespace NewLife.Net.Proxy
 
         ///// <summary>主过滤器，同时也是集合，会话主要针对这个操作</summary>
         //IProxyFilter MainFilter { get; }
+
+        /// <summary>开始会话时连接远程会话</summary>
+        Boolean ConnectRemoteOnStart { get; set; }
         #endregion
 
         #region 方法

@@ -6,46 +6,28 @@ using NewLife.Data;
 
 namespace NewLife.Net.Proxy
 {
-    /// <summary>代理会话</summary>
-    /// <typeparam name="TProxy">实际代理类型</typeparam>
-    /// <typeparam name="TProxySession">代理会话类型</typeparam>
-    public class ProxySession<TProxy, TProxySession> : ProxySession
-        where TProxy : ProxyBase<TProxySession>
-        where TProxySession : ProxySession, new()
-    {
-        /// <summary>代理对象</summary>
-        public TProxy Proxy { get { return (this as IProxySession).Proxy as TProxy; } set { (this as IProxySession).Proxy = value; } }
-    }
-
     /// <summary>代理会话。客户端的一次转发请求（或者Tcp连接），就是一个会话。转发的全部操作都在会话中完成。</summary>
     /// <remarks>
     /// 一个会话应该包含两端，两个Socket，服务端和客户端
     /// 客户端<see cref="INetSession.Session"/>发来的数据，在这里经过一系列过滤器后，转发给服务端<see cref="RemoteServer"/>；
     /// 服务端<see cref="RemoteServer"/>返回的数据，在这里经过过滤器后，转发给客户端<see cref="INetSession.Session"/>。
     /// </remarks>
-    public class ProxySession : NetSession, IProxySession
+    public class ProxySession : NetSession
     {
         #region 属性
-        /// <summary>代理对象</summary>
-        IProxy IProxySession.Proxy { get; set; }
-
         /// <summary>远程服务端。跟目标服务端通讯的那个Socket，其实是客户端TcpSession/UdpServer</summary>
         public ISocketClient RemoteServer { get; set; }
 
         /// <summary>服务端地址</summary>
-        public NetUri RemoteServerUri { get; set; }
+        public NetUri RemoteServerUri { get; set; } = new NetUri();
 
         /// <summary>是否中转空数据包。默认true</summary>
-        public Boolean ExchangeEmptyData { get; set; }
+        public Boolean ExchangeEmptyData { get; set; } = true;
         #endregion
 
         #region 构造
         /// <summary>实例化一个代理会话</summary>
-        public ProxySession()
-        {
-            RemoteServerUri = new NetUri();
-            ExchangeEmptyData = true;
-        }
+        public ProxySession() { }
 
         /// <summary>子类重载实现资源释放逻辑时必须首先调用基类方法</summary>
         /// <param name="disposing">从Dispose调用（释放所有资源）还是析构函数调用（释放非托管资源）</param>
@@ -70,6 +52,8 @@ namespace NewLife.Net.Proxy
             if (RemoteServerUri.Type == 0) RemoteServerUri.Type = Session.Local.Type;
             // 如果是Tcp，收到空数据时不要断开。为了稳定可靠，默认设置
             if (Session is TcpSession) (Session as TcpSession).DisconnectWhenEmptyData = false;
+
+            if (Server is ProxyBase proxy && proxy.ConnectRemoteOnStart) StartRemote(new ReceivedEventArgs());
 
             base.Start();
         }
@@ -152,7 +136,7 @@ namespace NewLife.Net.Proxy
 
         /// <summary>远程连接断开时触发。默认销毁整个会话，子类可根据业务情况决定客户端与代理的链接是否重用。</summary>
         /// <param name="client"></param>
-        protected virtual void OnRemoteDispose(ISocketClient client) { Dispose(); }
+        protected virtual void OnRemoteDispose(ISocketClient client) => Dispose();
 
         void Remote_Received(Object sender, ReceivedEventArgs e)
         {
@@ -204,25 +188,23 @@ namespace NewLife.Net.Proxy
         /// <param name="buffer">缓冲区</param>
         /// <param name="offset">位移</param>
         /// <param name="size">写入字节数</param>
-        public virtual IProxySession SendRemote(Byte[] buffer, Int32 offset = 0, Int32 size = -1)
+        public virtual Boolean SendRemote(Byte[] buffer, Int32 offset = 0, Int32 size = -1)
         {
             try
             {
-                RemoteServer.Send(new Packet(buffer, offset, size));
+                return RemoteServer.Send(new Packet(buffer, offset, size));
             }
             catch { Dispose(); throw; }
-
-            return this;
         }
 
         /// <summary>发送数据流</summary>
         /// <param name="stream"></param>
         /// <returns></returns>
-        public virtual IProxySession SendRemote(Stream stream)
+        public virtual Boolean SendRemote(Stream stream)
         {
             try
             {
-                RemoteServer.Send(stream);
+                return RemoteServer.Send(stream);
             }
             catch (Exception ex)
             {
@@ -231,22 +213,18 @@ namespace NewLife.Net.Proxy
                 Dispose();
                 throw;
             }
-
-            return this;
         }
 
         /// <summary>发送字符串</summary>
         /// <param name="msg"></param>
         /// <param name="encoding"></param>
-        public virtual IProxySession SendRemote(String msg, Encoding encoding = null)
+        public virtual Boolean SendRemote(String msg, Encoding encoding = null)
         {
             try
             {
-                RemoteServer.Send(msg, encoding);
+                return RemoteServer.Send(msg, encoding);
             }
             catch { Dispose(); throw; }
-
-            return this;
         }
         #endregion
 
@@ -282,23 +260,17 @@ namespace NewLife.Net.Proxy
         /// <param name="format"></param>
         /// <param name="args"></param>
         [Conditional("DEBUG")]
-        protected void WriteDebugLog(String format, params Object[] args)
-        {
-            WriteLog(format, args);
-        }
+        protected void WriteDebugLog(String format, params Object[] args) => WriteLog(format, args);
 
         /// <summary>写调试版日志</summary>
         /// <param name="action"></param>
         /// <param name="stream"></param>
         [Conditional("DEBUG")]
-        protected virtual void WriteDebugLog(String action, Stream stream)
-        {
-            WriteLog(action + "[{0}] {1}", stream.Length, stream.ReadBytes(16).ToHex());
-        }
+        protected virtual void WriteDebugLog(String action, Stream stream) => WriteLog(action + "[{0}] {1}", stream.Length, stream.ReadBytes(16).ToHex());
 
         /// <summary>已重载。</summary>
         /// <returns></returns>
-        public override String ToString() { return base.ToString() + "=>" + RemoteServerUri; }
+        public override String ToString() => base.ToString() + "=>" + RemoteServerUri;
         #endregion
     }
 }
