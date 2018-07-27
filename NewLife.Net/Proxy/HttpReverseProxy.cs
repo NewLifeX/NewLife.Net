@@ -49,9 +49,9 @@ namespace NewLife.Net.Proxy
             public HttpHeader Request { get; set; }
 
             /// <summary>属性说明</summary>
-            public String Host { get; set; }
+            public String RemoteHost { get; set; }
 
-            /// <summary>属性说明</summary>
+            /// <summary>原始主机</summary>
             public String RawHost { get; set; }
 
             /// <summary>请求时触发。</summary>
@@ -75,9 +75,9 @@ namespace NewLife.Net.Proxy
                 Request = entity;
                 OnRequest?.Invoke(this, e);
 
-                var pxy = Server as HttpReverseProxy;
+                var pxy = Host as HttpReverseProxy;
                 var host = entity.Url.IsAbsoluteUri ? entity.Url.Host : pxy.RemoteServer.Host;
-                Host = host;
+                RemoteHost = host;
                 RawHost = entity.Host;
                 entity.Host = host;
 

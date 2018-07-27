@@ -15,6 +15,9 @@ namespace NewLife.Net.Proxy
     public class ProxySession : NetSession
     {
         #region 属性
+        /// <summary>主机</summary>
+        public ProxyBase Host { get; set; }
+
         /// <summary>远程服务端。跟目标服务端通讯的那个Socket，其实是客户端TcpSession/UdpServer</summary>
         public ISocketClient RemoteServer { get; set; }
 
@@ -53,7 +56,7 @@ namespace NewLife.Net.Proxy
             // 如果是Tcp，收到空数据时不要断开。为了稳定可靠，默认设置
             if (Session is TcpSession) (Session as TcpSession).DisconnectWhenEmptyData = false;
 
-            if (Server is ProxyBase proxy && proxy.ConnectRemoteOnStart) StartRemote(new ReceivedEventArgs());
+            if (Host is ProxyBase proxy && proxy.ConnectRemoteOnStart) StartRemote(new ReceivedEventArgs());
 
             base.Start();
         }

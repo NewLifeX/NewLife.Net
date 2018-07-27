@@ -112,7 +112,7 @@ namespace NewLife.Net.Proxy
                     return;
                 }
 
-                var pxy = Server as HttpProxy;
+                var pxy = Host as HttpProxy;
                 #region 解析请求头
                 // 解析请求头。
                 var stream = e.Stream;
@@ -276,7 +276,7 @@ namespace NewLife.Net.Proxy
             Boolean ProcessConnect(HttpHeader entity, ReceivedEventArgs e)
             {
                 //WriteDebugLog("[{3}] {0} {1} [{2}]", entity.Method, entity.Url, entity.ContentLength, ID);
-                var pxy = Server as HttpProxy;
+                var pxy = Host as HttpProxy;
 
                 //var host = entity.Url.ToString();
                 var uri = RemoteServerUri;
@@ -321,7 +321,7 @@ namespace NewLife.Net.Proxy
             /// <returns></returns>
             protected virtual Boolean GetCache(HttpHeader entity, ReceivedEventArgs e)
             {
-                var pxy = Server as HttpProxy;
+                var pxy = Host as HttpProxy;
                 if (!pxy.EnableCache || entity == null) return false;
 
                 if (entity.Method.EqualIgnoreCase("GET"))
@@ -366,7 +366,7 @@ namespace NewLife.Net.Proxy
             /// <returns>修改后的数据</returns>
             protected override void OnReceiveRemote(ReceivedEventArgs e)
             {
-                var pxy = Server as HttpProxy;
+                var pxy = Host as HttpProxy;
                 var parseHeader = pxy.EnableCache || pxy.GetHandler(EventKind.OnResponse) != null;
                 var parseBody = pxy.EnableCache || pxy.GetHandler(EventKind.OnResponseBody) != null;
 
@@ -519,7 +519,7 @@ namespace NewLife.Net.Proxy
                 var response = entity;
                 if (request == null || response == null) return false;
 
-                var pxy = Server as HttpProxy;
+                var pxy = Host as HttpProxy;
                 var cache = pxy.Cache;
                 if (request.Method.EqualIgnoreCase("GET"))
                 {

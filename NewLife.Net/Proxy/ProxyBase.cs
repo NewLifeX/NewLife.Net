@@ -26,7 +26,16 @@ namespace NewLife.Net.Proxy
         /// <summary>创建会话</summary>
         /// <param name="session"></param>
         /// <returns></returns>
-        protected override INetSession CreateSession(ISocketSession session) => new ProxySession();
+        protected override INetSession CreateSession(ISocketSession session) => new ProxySession { Host = this };
+
+        /// <summary>添加会话</summary>
+        /// <param name="session"></param>
+        protected override void AddSession(INetSession session)
+        {
+            if (session is ProxySession ss) ss.Host = this;
+
+            base.AddSession(session);
+        }
         #endregion
     }
 }
