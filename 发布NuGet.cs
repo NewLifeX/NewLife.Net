@@ -1,4 +1,5 @@
 ﻿//assembly=..\Src\DLL\NuGet.exe
+//assembly=System.ComponentModel.DataAnnotations
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -32,28 +33,17 @@ namespace NewLife.Reflection
             var proj = ".".AsDirectory().FullName.EnsureEnd("\\");
 
             Console.WriteLine("proj项目：{0}", proj);
-            string[] pathsplit = proj.Split("\\");
 
-            var name = pathsplit[pathsplit.Count() - 1];
+            var name = "NewLife.Net";
             Console.WriteLine("项目：{0}", name);
-            proj = name + ".csproj";
+            proj = ".".AsDirectory().GetAllFiles("*.csproj").FirstOrDefault().FullName;
             var spec = name + ".nuspec";
 			var specFile = spec.GetFullPath();
             
             if (!File.Exists(specFile))
             {
-				var tar = "..\\..\\Bin\\" + name + ".dll";
+				var tar = "..\\Bin\\" + name + ".dll";
 				tar = tar.GetFullPath();
-                if (!File.Exists(tar))
-                {
-					tar = "..\\..\\Bin4\\" + name + ".exe";
-					tar = tar.GetFullPath();
-                }
-                if (!File.Exists(tar))
-                {
-					tar = "..\\..\\XCoder\\" + name + ".exe";
-					tar = tar.GetFullPath();
-                }
                 if (!File.Exists(tar))
                 {
 					Console.WriteLine("只能找项目文件了，总得做点啥不是");
@@ -85,7 +75,7 @@ namespace NewLife.Reflection
             cfg.Metadata.IconUrl = "http://www.NewLifeX.com/favicon.ico";
             cfg.Metadata.Copyright = "Copyright 2002-{0} 新生命开发团队 http://www.NewLifeX.com".F(DateTime.Now.Year);
             cfg.Metadata.Tags = "新生命团队 X组件 NewLife " + name;
-            cfg.Metadata.ReleaseNotes = "https://github.com/NewLifeX";
+            cfg.Metadata.ReleaseNotes = "https://github.com/NewLifeX/NewLife.Net";
             //cfg.Metadata.Authors="新生命开发团队";
             //cfg.Metadata.Owners="新生命开发团队";
 
@@ -95,8 +85,8 @@ namespace NewLife.Reflection
             cfg.Metadata.Repository = rep;*/
             
             // 清空依赖
-            var dgs = cfg.Metadata?.DependencySets;
-            dgs?.Clear();
+            var dgs = cfg.Metadata.DependencySets;
+            if (dgs != null) dgs.Clear();
             //var dgs = cfg.Metadata.DependencyGroups;
             //dps.RemoveAll(e => e.Id == "SampleDependency");
 
@@ -109,10 +99,8 @@ namespace NewLife.Reflection
             cfg.Files.Clear();
             if (cfg.Files.Count == 0)
             {
-                AddFile(cfg, name, "dll;xml;pdb;exe", @"..\..\Bin", @"lib\net45");
-                AddFile(cfg, name, "dll;xml;pdb;exe", @"..\..\Bin2", @"lib\net20");
-                AddFile(cfg, name, "dll;xml;pdb;exe", @"..\..\Bin4", @"lib\net40");
-                AddFile(cfg, name, "dll;xml;pdb;exe", @"..\..\Bin\netstandard2.0", @"lib\netstandard2.0");
+                AddFile(cfg, name, "dll;xml;pdb;exe", @"..\Bin", @"lib\net45");
+                AddFile(cfg, name, "dll;xml;pdb;exe", @"..\Bin\netstandard2.0", @"lib\netstandard2.0");
 
                 if (name == "XCode") AddFile(cfg, null, "*.ps1", @"tools", @"tools");
             }
@@ -149,7 +137,7 @@ namespace NewLife.Reflection
             //XTrace.WriteLine("目录：{0} 文件：{1}", src.AsDirectory().FullName, fs.Count);
             if(fs.Count == 0) return;
             
-            var dgs = cfg.Metadata?.DependencySets;
+            var dgs = cfg.Metadata.DependencySets;
             var dg = new ManifestDependencySet();
             switch(target.Substring(@"\"))
             {
