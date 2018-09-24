@@ -15,12 +15,11 @@ namespace NewLife.Net.DNS
     /// 参考博客园 @看那边的人 <a target="_blank" href="http://www.cnblogs.com/topdog/archive/2011/11/15/2250185.html">DIY一个DNS查询器：了解DNS协议</a> 
     /// <a target="_blank" href="http://www.cnblogs.com/topdog/archive/2011/11/21/2257597.html">DIY一个DNS查询器：程序实现</a>
     /// </remarks>
-    public class DNSEntity : Message<DNSEntity>
+    public class DNSEntity : IAccessor
     {
         #region 属性
-        private DNSHeader _Header = new DNSHeader();
         /// <summary>头部</summary>
-        public DNSHeader Header { get { return _Header; } set { _Header = value; } }
+        public DNSHeader Header { get; set; } = new DNSHeader();
 
         [FieldSize("_Header._Questions")]
         private DNSQuery[] _Questions;
@@ -44,28 +43,6 @@ namespace NewLife.Net.DNS
         #endregion
 
         #region 扩展属性
-        ///// <summary>是否响应</summary>
-        //public Boolean Response { get { return Header.Response; } set { Header.Response = value; } }
-
-        //DNSQuery Question
-        //{
-        //    get
-        //    {
-        //        if (Questions == null || Questions.Length < 1) Questions = new DNSQuery[] { new DNSQuery() };
-
-        //        return Questions[0];
-        //    }
-        //}
-
-        ///// <summary>名称</summary>
-        //public virtual String Name { get { return Question.Name; } set { Question.Name = value; } }
-
-        ///// <summary>查询类型</summary>
-        //public virtual DNSQueryType Type { get { return Question.Type; } set { Question.Type = value; } }
-
-        ///// <summary>协议组</summary>
-        //public virtual DNSQueryClass Class { get { return Question.Class; } set { Question.Class = value; } }
-
         /// <summary>获取响应</summary>
         /// <param name="create"></param>
         /// <returns></returns>
@@ -89,12 +66,26 @@ namespace NewLife.Net.DNS
 
             return Answers[0];
         }
-
-        ///// <summary>是否PTR类型</summary>
-        //public Boolean IsPTR { get { return Type == DNSQueryType.PTR; } }
         #endregion
 
         #region 读写
+        /// <summary>从数据流中读取消息</summary>
+        /// <param name="stream">数据流</param>
+        /// <param name="context">上下文</param>
+        /// <returns>是否成功</returns>
+        public virtual Boolean Read(Stream stream, Object context)
+        {
+            throw new NotImplementedException();
+        }
+
+        /// <summary>把消息写入到数据流中</summary>
+        /// <param name="stream">数据流</param>
+        /// <param name="context">上下文</param>
+        public virtual Boolean Write(Stream stream, Object context)
+        {
+            throw new NotImplementedException();
+        }
+
         /// <summary>把当前对象写入到数据流中去</summary>
         /// <param name="stream"></param>
         /// <param name="forTcp">是否是Tcp，Tcp需要增加整个流长度</param>
@@ -159,29 +150,30 @@ namespace NewLife.Net.DNS
                 stream = new MemoryStream(data);
             }
 
-            return Read(stream);
+            //return Read(stream);
+            return null;
         }
 
-        /// <summary>创建序列化器</summary>
-        /// <param name="isRead"></param>
-        /// <returns></returns>
-        protected override IFormatterX CreateFormatter(Boolean isRead)
-        {
-            var fm = base.CreateFormatter(isRead);
-            fm.Encoding = Encoding.UTF8;
-            fm.UseProperty = false;
+        ///// <summary>创建序列化器</summary>
+        ///// <param name="isRead"></param>
+        ///// <returns></returns>
+        //protected override IFormatterX CreateFormatter(Boolean isRead)
+        //{
+        //    var fm = base.CreateFormatter(isRead);
+        //    fm.Encoding = Encoding.UTF8;
+        //    fm.UseProperty = false;
 
-            var bn = fm as Binary;
-            if (bn != null)
-            {
-                bn.EncodeInt = false;
-                bn.UseFieldSize = true;
-                bn.UseRef = false;
-                bn.AddHandler<BinaryDNS>();
-            }
+        //    var bn = fm as Binary;
+        //    if (bn != null)
+        //    {
+        //        bn.EncodeInt = false;
+        //        bn.UseFieldSize = true;
+        //        bn.UseRef = false;
+        //        bn.AddHandler<BinaryDNS>();
+        //    }
 
-            return fm;
-        }
+        //    return fm;
+        //}
         #endregion
 
         #region 注册子类型

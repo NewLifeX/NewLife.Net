@@ -45,10 +45,12 @@ namespace NewLife.Net.DNS
             request.Header.Broadcast = false;
 
 
-            var add = new DNS_NB();
-            add.Name = EncodeName(name);
-            add.TTL = new TimeSpan(0, 0, 30);
-            add.Address = address;
+            var add = new DNS_NB
+            {
+                Name = EncodeName(name),
+                TTL = new TimeSpan(0, 0, 30),
+                Address = address
+            };
 
             request.Additionals = new DNSRecord[] { add };
 
@@ -78,7 +80,7 @@ namespace NewLife.Net.DNS
             return sb.ToString();
         }
 
-        DNSEntity Invoke(DNSEntity request) { return Invoke(request, true); }
+        DNSEntity Invoke(DNSEntity request) => Invoke(request, true);
 
         private static readonly Int32 _maxRetryAttemps = 2;
         internal DNSEntity Invoke(DNSEntity request, Boolean isQuery)
@@ -96,9 +98,10 @@ namespace NewLife.Net.DNS
 
                 try
                 {
-                    socket = new Socket(AddressFamily.InterNetwork, SocketType.Dgram, ProtocolType.Udp);
-
-                    socket.ReceiveTimeout = 300;
+                    socket = new Socket(AddressFamily.InterNetwork, SocketType.Dgram, ProtocolType.Udp)
+                    {
+                        ReceiveTimeout = 300
+                    };
                     //socket.SetSocketOption(SocketOptionLevel.Socket, SocketOptionName.ReceiveTimeout, 300);
 
                     socket.SendTo(bytes, bytes.Length, SocketFlags.None, new IPEndPoint(IPAddress.Parse("192.168.178.255"), 137));
@@ -120,7 +123,7 @@ namespace NewLife.Net.DNS
 
                     //DnsReader br = new DnsReader(responseMessage);
                     //DnsResponse res = new DnsResponse(br);
-                    var rs = DNSEntity.Read(responseMessage);
+                    var rs = DNSEntity.Read(responseMessage, false);
 
                     if (request.Header.ID == rs.Header.ID) return rs;
 

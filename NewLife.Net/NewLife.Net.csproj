@@ -24,10 +24,10 @@
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
-    <OutputPath>..\..\Bin\</OutputPath>
+    <OutputPath>..\Bin\</OutputPath>
     <DefineConstants>TRACE</DefineConstants>
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
-    <DocumentationFile>..\..\Bin\NewLife.Net.XML</DocumentationFile>
+    <DocumentationFile>..\Bin\NewLife.Net.XML</DocumentationFile>
     <Optimize>true</Optimize>
     <DebugType>pdbonly</DebugType>
     <PlatformTarget>AnyCPU</PlatformTarget>
@@ -52,13 +52,6 @@
     <Compile Include="Application\LogServer.cs" />
     <Compile Include="Application\EchoServer.cs" />
     <Compile Include="Application\SerialServer.cs" />
-    <Compile Include="CoAP\CoAPMessage.cs" />
-    <Compile Include="Dhcp\DhcpClient.cs" />
-    <Compile Include="Dhcp\DhcpMessageType.cs" />
-    <Compile Include="Dhcp\DhcpEntity.cs" />
-    <Compile Include="Dhcp\DhcpOption.cs" />
-    <Compile Include="Dhcp\DhcpServer.cs" />
-    <Compile Include="Dhcp\DhcpSession.cs" />
     <Compile Include="DNS\BinaryDNS.cs" />
     <Compile Include="DNS\DNSClient.cs" />
     <Compile Include="DNS\DNSEntity.cs" />
@@ -86,8 +79,6 @@
     <Compile Include="FTP\FTPSession.cs" />
     <Compile Include="FTP\FTPTransferMode.cs" />
     <Compile Include="Http\HttpCache.cs" />
-    <Compile Include="ISO\COTP.cs" />
-    <Compile Include="ISO\TPKT.cs" />
     <Compile Include="Modbus\DataStore.cs" />
     <Compile Include="Modbus\Errors.cs" />
     <Compile Include="Modbus\IDataStore.cs" />
@@ -266,7 +257,7 @@
   </ItemGroup>
   <ItemGroup>
     <PackageReference Include="NewLife.Core">
-      <Version>7.3.6763.36550</Version>
+      <Version>7.3.6839.35284</Version>
     </PackageReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
