@@ -1,7 +1,7 @@
 ﻿using System;
 using NewLife.Data;
 using NewLife.Log;
-using NewLife.Net.Handlers;
+using NewLife.Model;
 
 namespace NewLife.Net.Application
 {
@@ -14,18 +14,21 @@ namespace NewLife.Net.Application
         /// <returns></returns>
         public override Object Read(IHandlerContext context, Object message)
         {
+            var ctx = context as NetHandlerContext;
+            var session = ctx.Session;
+
             if (message is Packet pk)
             {
                 var len = pk.Total;
                 if (len > 100)
-                    XTrace.WriteLine("Echo {0} [{1}]", context.Session, len);
+                    XTrace.WriteLine("Echo {0} [{1}]", session, len);
                 else
-                    XTrace.WriteLine("Echo {0} [{1}] {2}", context.Session, len, pk.ToStr());
+                    XTrace.WriteLine("Echo {0} [{1}] {2}", session, len, pk.ToStr());
             }
             else
                 XTrace.WriteLine("{0}", message);
 
-            context.Session.SendMessage(message);
+            session.SendMessage(message);
 
             return null;
         }
