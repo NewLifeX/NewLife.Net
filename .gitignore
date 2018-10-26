@@ -22,3 +22,5 @@ bld/
 *.nuspec
 *.nupkg
 /MigrationBackup
+/BinEcho
+/EchoTest/.vs/EchoTest/v15
