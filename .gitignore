@@ -24,3 +24,7 @@ bld/
 /MigrationBackup
 /BinEcho
 /EchoTest/.vs/EchoTest/v15
+/BinAgent
+/BinHandler
+/BinNC
+/BinRpc/netcoreapp2.0
