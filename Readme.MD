@@ -1,6 +1,12 @@
 经过十多年实战经验积累以及多方共同讨论，[新生命团队](https://github.com/newlifex)制订了一种简单而又具有较好扩展性的`RPC（Remote Procedure Call）`协议。  
 全称：`简易远程消息交换协议`，简称： `SRMP（Simple Remote Messaging Protocol）`  
 
+### SRMP目标场景  
+SRMP主要定位于以下场景：
+1, 内网高速通信，大吞吐量（>100万tps）、低延迟（<1ms）
+2, 外网远程通信，稳定可靠，海量连接（>10万）
+3, 物联网硬件设备，容易简单实现协议
+
 ### 通信协议  
 基于新生命团队标准网络封包协议  
 标准网络封包协议：`1 Flag + 1 Sequence + 2 Length + N Payload`  
