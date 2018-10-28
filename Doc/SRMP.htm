@@ -1,0 +1,148 @@
+<h1><span style="font-size: large;">一、SRMP目标定位</span></h1>
+<p>
+    <span style="font-size: large;">
+        经过十多年实战经验积累以及多方共同讨论，新生命团队（<a href="https://github.com/newlifex" target="_blank">https://github.com/newlifex</a>）制订了一种简单而又具有较好扩展性的RPC（Remote Procedure Call）协议。
+    </span>
+</p><p>
+    全称：<span style="color: #ff0000;"><strong>简易远程消息交换协议</strong></span>，简称：<strong>
+        <span style="color: #ff0000;">
+            SRMP（Simple Remote Messaging Protocol）
+        </span>
+    </strong>
+</p>
+<p><br /><span style="font-size: large;">SRMP主要定位于以下场景：</span></p>
+<ol>
+    <li><span style="font-size: large;">内网高速通信，大吞吐量（&gt;100万tps）、低延迟（&lt;1ms）</span></li>
+    <li><span style="font-size: large;">外网远程通信，稳定可靠，海量连接（&gt;10万）</span></li>
+    <li><span style="font-size: large;">物联网硬件设备，容易简单实现协议</span></li>
+</ol>
+<p>&nbsp;</p>
+<h1><span style="font-size: large;">二、SRMP基础格式</span></h1>
+<p>
+    <span style="font-size: x-large;"><strong>协议格式</strong></span><span style="font-size: large;">：</span><strong>
+        <span style="font-size: xx-large;"><span style="color: #ff0000;">1 Flag + 1 Sequence + 2 Length + N Payload</span></span>
+    </strong><br /><span style="font-size: large;"><span style="color: #0000ff;"><strong>1个字节标识位，标识请求、响应、错误、加密、压缩等；</strong></span></span><br /><span style="font-size: large;"><span style="color: #0000ff;"><strong>1个字节序列号，用于请求响应包配对；</strong></span></span><br /><span style="font-size: large;"><span style="color: #0000ff;"><strong>2个字节数据长度N，小端字节序，指示后续负载数据长度（不包含头部4个字节），解决粘包问题；</strong></span></span><br /><span style="font-size: large;"><span style="color: #0000ff;"><strong>N个字节负载数据，数据内容完全由业务决定，最大长度65534=64k-2。</strong></span></span>
+</p>
+<p>负载数据大于等于64k时，数据长度字段填65535（0xFFFF），启用后续4字节扩展长度，最大长度4G（0xFFFFFFFF）。</p>
+<p>物联网硬件设备建议直接忽略扩展长度。</p>
+<table style="height: 240px; width: 420px; font-size: 16px; text-align: center;" border="1" align="left">
+    <caption>SRMP请求格式</caption>
+    <tbody>
+        <tr>
+            <td>字节</td>
+            <td>7</td>
+            <td>6</td>
+            <td>5</td>
+            <td>4</td>
+            <td>3</td>
+            <td>2</td>
+            <td>1</td>
+            <td>0</td>
+        </tr>
+        <tr>
+            <td>1</td>
+            <td>请求0</td>
+            <td>单向</td>
+            <td>压缩</td>
+            <td>加密</td>
+            <td colspan="4">保留</td>
+        </tr>
+        <tr>
+            <td>1</td>
+            <td colspan="8">序列号（0~255）</td>
+        </tr>
+        <tr>
+            <td>2</td>
+            <td colspan="8">变长数据长度Length（0~65534）</td>
+        </tr>
+        <tr>
+            <td>变长</td>
+            <td colspan="8">
+                <table style="height: 120px; width: 90%; font-size: 16px; text-align: center;" border="1">
+                    <tbody>
+                        <tr>
+                            <td>字节数</td>
+                            <td>项目</td>
+                        </tr>
+                        <tr>
+                            <td>S</td>
+                            <td>服务名</td>
+                        </tr>
+                        <tr>
+                            <td>N</td>
+                            <td>请求参数</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </td>
+        </tr>
+    </tbody>
+</table>
+<table style="height: 240px; width: 420px; font-size: 16px; text-align: center;" border="1" align="left">
+    <caption>SRMP响应格式</caption>
+    <tbody>
+        <tr>
+            <td>字节</td>
+            <td>7</td>
+            <td>6</td>
+            <td>5</td>
+            <td>4</td>
+            <td>3</td>
+            <td>2</td>
+            <td>1</td>
+            <td>0</td>
+        </tr>
+        <tr>
+            <td>1</td>
+            <td>响应1</td>
+            <td>错误</td>
+            <td>压缩</td>
+            <td>加密</td>
+            <td colspan="4">保留</td>
+        </tr>
+        <tr>
+            <td>1</td>
+            <td colspan="8">序列号（0~255）</td>
+        </tr>
+        <tr>
+            <td>2</td>
+            <td colspan="8">变长数据长度Length（0~65534）</td>
+        </tr>
+        <tr>
+            <td>变长</td>
+            <td colspan="8">
+                <table style="height: 120px; width: 90%; font-size: 16px; text-align: center;" border="1">
+                    <tbody>
+                        <tr>
+                            <td>字节数</td>
+                            <td>项目</td>
+                        </tr>
+                        <tr>
+                            <td>S</td>
+                            <td>服务名</td>
+                        </tr>
+                        <tr>
+                            <td>4</td>
+                            <td>响应代码</td>
+                        </tr>
+                        <tr>
+                            <td>N</td>
+                            <td>响应数据</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </td>
+        </tr>
+    </tbody>
+</table>
+<p>&nbsp;</p>
+<p>&nbsp;</p>
+<p>&nbsp;</p>
+<p>&nbsp;</p>
+<p>&nbsp;</p>
+<p>&nbsp;</p>
+<p>&nbsp;</p>
+<p>&nbsp;</p>
+<h1><span style="font-size: large;">三、SRMP远程调用</span></h1>
+<p>SRMP主要分为请求和响应两种指令。</p>
+<p>&nbsp;</p>

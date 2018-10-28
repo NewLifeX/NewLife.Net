@@ -1,64 +1,29 @@
-新生命团队基础框架X组件，包括`网络、数据库、安全、多线程、反射、序列化、模版引擎、服务代理、远程过程调用`等模块，包括`Mvc后台魔方、码神工具、消息队列`等子系统，支持`Mono/Android/iOS/NetStandard`。
+经过十多年实战经验积累以及多方共同讨论，新生命团队(https://github.com/newlifex)制订了一种简单而又具有较好扩展性的`RPC（Remote Procedure Call）`协议。  
+全称：`简易远程消息交换协议`，简称： `SRMP（Simple Remote Messaging Protocol）`  
+
+###通信协议
+基于新生命团队标准网络封包协议  
+标准网络封包协议：`1 Flag + 1 Sequence + 2 Length + N Payload`  
+1个字节标识位，标识请求、响应、错误、加密、压缩等；  
+1个字节序列号，用于请求响应包配对；  
+2个字节数据长度N，小端字节序，指示后续负载数据长度（不包含头部4个字节），解决粘包问题；  
+N个字节负载数据，数据内容完全由业务决定，最大长度65534=64k-2。  
+
+###指令格式
+默认采用Json序列化，utf-8编码  
+
+请求：S服务名 + N请求参数
+响应：S服务名 + 4响应码 + N响应数据
+
+标准指令例子如下：  
+请求，00012500 + 05 + Login + 1E + {user:"Stone",pass:"password"}  
+响应，80011D00 + 05 + Login + 00000000 + 12 + {data:"大石头"}  
+头部4字节，第一个字节最高位区分请求响应，第二个字节序列化，第三第四字节是长度，小字节序  
 
 #### 新生命开发团队  
-网站：http://www.NewLifeX.com  
 博客：https://nnhy.cnblogs.com  
 QQ群：1600800  
 
-## 项目源码位置
+## 项目位置
 `注意：X组件具有15年漫长历史，源码库保留有2010年以来所有修改记录，并一直保持更新，请确保获取得到最新版本源代码`  
-国内 http://git.NewLifeX.com/NewLife/X  
-国外 https://github.com/NewLifeX/X  
-
-## 组件各组成部分
-### 核心库 NewLife.Core
-核心组件，支撑其它所有组件。  
-主要功能包括：  
-+ **[网络库]** 支持企业应用服务十万级并发 Tcp/Udp/Http/WebSocket/IPv6
-+ **[安全]** AES/DES/RC4/RSA/DSA/CRC
-+ **[多线程]** 定时调度TimerX
-+ **[反射]** 快速反射、脚本引擎ScriptEngine、动态对象
-+ **[序列化]** Binary/Json/Xml
-+ **[服务代理]** Windows服务、守护、监控
-+ **[远程过程调用RPC]** Tcp/Udp/Http/Json、身份验证、数据加密
-
-[网络库]:Net/Readme.md "支持企业应用服务十万级并发"
-[安全]:Security/Readme.md
-[多线程]:Threading/Readme.md
-[反射]:Reflection/Readme.md
-[序列化]:Serialization/Readme.md
-[服务代理]:Agent/Readme.md
-[远程过程调用RPC]:Remoting/Readme.md
-
-### Android库 NewLife.Android
-Android版核心库，共用代码，供Xamarin Android开发使用
-
-### iOS库 NewLife.iOS
-iOS版核心库，共用代码，供Xamarin iOS开发使用
-
-### [数据中间件 NewLife.XCode]
-主要特点：  
-1，设计极致的缓存，超高性能  
-2，反向工程，根据实体类主动建立数据库表结构并初始化数据，支持8种数据库  
-3，无限分表分库，支持任意数据库，无需修改业务代码  
-
-### 魔方Mvc管理后台 NewLife.Cube
-酷比魔方，Bootstrap风格的Mvc权限管理后台，集成管理员、角色、菜单、权限、日志等基本功能模块。
-
-### 网络协议库 NewLife.Net
-支持DNS/DHCP等几十种常见以太网协议的解析
-
-### 码神工具 XCoder
-由一系列开发者工具组成：  
-1，数据模型工具  
-2，网络调试工具  
-3，串口调试工具  
-4，正则表达式工具  
-5，图标处理工具  
-6，文件信息处理工具  
-
-### 模版引擎 XTemplate
-使用C#编写模版，T4风格，主要用于生成实体代码和页面  
-
-### 消息队列 NewLife.MQ
-发布与订阅  
+https://github.com/NewLifeX/NewLife.Net  
