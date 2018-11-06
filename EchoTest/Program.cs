@@ -41,16 +41,16 @@ namespace EchoTest
                 Port = 1234,
                 Log = XTrace.Log,
                 SessionLog = XTrace.Log,
-                SocketLog = XTrace.Log,
-                LogSend = true,
-                LogReceive = true,
+                //SocketLog = XTrace.Log,
+                //LogSend = true,
+                //LogReceive = true,
             };
             svr.Start();
 
             _server = svr;
 
             // 定时显示性能数据
-            _timer = new TimerX(ShowStat, svr, 100, 1000);
+            _timer = new TimerX(ShowStat, svr, 100, 1000) { Async = true };
         }
 
         static void TestClient()

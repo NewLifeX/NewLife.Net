@@ -2,9 +2,6 @@
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
-using System.Reflection;
-using System.Text;
-using System.Threading;
 using System.Threading.Tasks;
 using NewLife.Data;
 using NewLife.Log;
@@ -76,28 +73,22 @@ namespace Benchmark
             var sw = Stopwatch.StartNew();
 
             // 多线程
-            var ts = new List<Task>();
-            var total = 0;
+            var ts = new List<Task<Int32>>();
+            var maxCPU = Environment.ProcessorCount * 2;
             for (var i = 0; i < cfg.Thread; i++)
             {
-                var tsk = Task.Factory.StartNew(() =>
+                if (cfg.Thread <= maxCPU)
                 {
-                    try
-                    {
-                        var client = uri.CreateRemote();
-                        client.Open();
-                        for (var k = 0; k < cfg.Times; k++)
-                        {
-                            client.Send(pk);
-                            Interlocked.Increment(ref total);
-                        }
-                        return client;
-                    }
-                    catch { return null; }
-                }, TaskCreationOptions.LongRunning);
-                ts.Add(tsk);
+                    var tsk = Task.Factory.StartNew(() => WorkOne(uri, cfg, pk), TaskCreationOptions.LongRunning);
+                    ts.Add(tsk);
+                }
+                else
+                {
+                    var tsk = Task.Run(async () => await WorkOneAsync(uri, cfg, pk));
+                    ts.Add(tsk);
+                }
             }
-            Task.WaitAll(ts.ToArray());
+            var total = Task.WhenAll(ts.ToArray()).Result.Sum();
 
             sw.Stop();
 
@@ -108,6 +99,46 @@ namespace Benchmark
 
             //Thread.Sleep(5000);
             Console.ReadKey(true);
+        }
+
+        static Int32 WorkOne(NetUri uri, Config cfg, Packet pk)
+        {
+            var count = 0;
+            try
+            {
+                var client = uri.CreateRemote();
+                client.Open();
+                for (var k = 0; k < cfg.Times; k++)
+                {
+                    client.Send(pk);
+                    count++;
+                }
+            }
+            catch { }
+
+            return count;
+        }
+
+        static async Task<Int32> WorkOneAsync(NetUri uri, Config cfg, Packet pk)
+        {
+            var count = 0;
+            try
+            {
+                var client = uri.CreateRemote();
+                client.Open();
+
+                await Task.Yield();
+                for (var k = 0; k < cfg.Times; k++)
+                {
+                    client.Send(pk);
+                    count++;
+
+                    await Task.Yield();
+                }
+            }
+            catch { }
+
+            return count;
         }
     }
 }
