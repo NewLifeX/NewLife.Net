@@ -4,10 +4,8 @@ using System.IO;
 using System.Net;
 using System.Text;
 using System.Threading.Tasks;
-using NewLife.Configuration;
 using NewLife.Log;
 using NewLife.Net.Sockets;
-using NewLife.Threading;
 using NewLife.Xml;
 
 namespace NewLife.Net.UPnP
@@ -227,7 +225,7 @@ namespace NewLife.Net.UPnP
 
         #region 辅助函数
         /// <summary>是否缓存网关。缓存网关可以加速UPnP的发现过程</summary>
-        public static Boolean CacheGateway => Config.GetConfig<Boolean>("NewLife.Net.UPnP.CacheGateway");
+        public static Boolean CacheGateway { get; } = true;//=> Config.GetConfig<Boolean>("NewLife.Net.UPnP.CacheGateway");
         #endregion
     }
 }

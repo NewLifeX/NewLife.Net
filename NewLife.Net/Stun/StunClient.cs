@@ -1,9 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.IO;
 using System.Net;
 using System.Net.Sockets;
-using NewLife.Configuration;
 using NewLife.Data;
 using NewLife.Net.Sockets;
 
@@ -87,7 +85,7 @@ namespace NewLife.Net.Stun
 
         #region 服务器
         //static String[] servers = new String[] { "stun.NewLifeX.com", "stun.sipgate.net:10000", "stunserver.org", "stun.xten.com", "stun.fwdnet.net", "stun.iptel.org", "220.181.126.73" };
-        static String[] servers = new String[] { "stun.NewLifeX.com", "stun.sipgate.net:10000", "stun.xten.com", "stun.iptel.org", "220.181.126.73" };
+        static readonly String[] servers = new String[] { "stun.NewLifeX.com", "stun.sipgate.net:10000", "stun.xten.com", "stun.iptel.org", "220.181.126.73" };
         private List<String> _Servers;
         /// <summary>Stun服务器</summary>
         public List<String> Servers
@@ -97,8 +95,8 @@ namespace NewLife.Net.Stun
                 if (_Servers == null)
                 {
                     var list = new List<String>();
-                    var ss = Config.GetConfigSplit<String>("NewLife.Net.StunServers", null);
-                    if (ss != null && ss.Length > 0) list.AddRange(ss);
+                    //var ss = Config.GetConfigSplit<String>("NewLife.Net.StunServers", null);
+                    //if (ss != null && ss.Length > 0) list.AddRange(ss);
                     list.AddRange(servers);
                     _Servers = list;
                 }
@@ -288,8 +286,10 @@ namespace NewLife.Net.Stun
 
             // Test I
             // 测试网络是否畅通
-            var msg = new StunMessage();
-            msg.Type = StunMessageType.BindingRequest;
+            var msg = new StunMessage
+            {
+                Type = StunMessageType.BindingRequest
+            };
             var rs = Query(client, msg, remote);
 
             // UDP blocked.
@@ -371,8 +371,10 @@ namespace NewLife.Net.Stun
         {
             EnsureSocket();
             //var socket = Socket.Socket;
-            var msg = new StunMessage();
-            msg.Type = StunMessageType.BindingRequest;
+            var msg = new StunMessage
+            {
+                Type = StunMessageType.BindingRequest
+            };
             IPEndPoint ep = null;
             foreach (var item in Servers)
             {

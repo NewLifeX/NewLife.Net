@@ -1,12 +1,9 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using NewLife;
 using NewLife.Agent;
 using NewLife.Log;
 using NewLife.Net;
+using NewLife.Threading;
 
 namespace EchoAgent
 {
@@ -26,11 +23,6 @@ namespace EchoAgent
             ServiceName = "EchoAgent";
             DisplayName = "回声服务";
             Description = "这是NewLife.Net的一个回声服务示例！";
-
-            // 准备两个工作线程，分别负责输出日志和向客户端发送时间
-            //ThreadCount = 2;
-            ThreadCount = 1;
-            Intervals = new[] { 1, 5 };
         }
 
         MyNetServer _Server;
@@ -48,6 +40,9 @@ namespace EchoAgent
 
             _Server = svr;
 
+            _timer1 = new TimerX(s => ShowStat(_Server), null, 1000, 1000) { Async = true };
+            _timer2 = new TimerX(s => SendTime(_Server), null, 1000, 1000) { Async = true };
+
             base.StartWork(reason);
         }
 
@@ -61,18 +56,8 @@ namespace EchoAgent
             base.StopWork(reason);
         }
 
-        /// <summary>调度器让每个任务线程定时执行Work，index标识任务</summary>
-        /// <param name="index"></param>
-        /// <returns></returns>
-        public override Boolean Work(Int32 index)
-        {
-            switch (index)
-            {
-                case 0: ShowStat(_Server); break;
-                case 1: SendTime(_Server); break;
-            }
-            return false;
-        }
+        private TimerX _timer1;
+        private TimerX _timer2;
 
         private String _last;
         /// <summary>显示服务端状态</summary>

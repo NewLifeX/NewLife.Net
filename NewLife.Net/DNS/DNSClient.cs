@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -162,8 +161,8 @@ namespace NewLife.Net.DNS
             var dic = new Dictionary<DNSClient, DNSEntity>();
             for (var i = 0; i < cs.Length; i++)
             {
-                var task = ts[i];
-                if (task.IsOK() && task.Result != null) dic.Add(cs[i], task.Result);
+                var rs = ts[i].Result;
+                if (rs != null) dic.Add(cs[i], rs);
             }
 
             return dic;

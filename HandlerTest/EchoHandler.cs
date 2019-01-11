@@ -2,6 +2,7 @@
 using NewLife.Data;
 using NewLife.Log;
 using NewLife.Model;
+using NewLife.Net;
 
 namespace HandlerTest
 {
