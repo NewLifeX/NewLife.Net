@@ -564,85 +564,85 @@ namespace NewLife.Net.Proxy
         #endregion
 
         #region 浏览器代理
-        struct Struct_INTERNET_PROXY_INFO
-        {
-            public Int32 dwAccessType;
-            public IntPtr proxy;
-            public IntPtr proxyBypass;
-        }
+        //struct Struct_INTERNET_PROXY_INFO
+        //{
+        //    public Int32 dwAccessType;
+        //    public IntPtr proxy;
+        //    public IntPtr proxyBypass;
+        //}
 
-        /// <summary>定义API函数</summary>
-        /// <param name="hInternet"></param>
-        /// <param name="dwOption"></param>
-        /// <param name="lpBuffer"></param>
-        /// <param name="lpdwBufferLength"></param>
-        /// <returns></returns>
-        [DllImport("wininet.dll", SetLastError = true)]
-        private static extern Boolean InternetSetOption(IntPtr hInternet, Int32 dwOption, IntPtr lpBuffer, Int32 lpdwBufferLength);
+        ///// <summary>定义API函数</summary>
+        ///// <param name="hInternet"></param>
+        ///// <param name="dwOption"></param>
+        ///// <param name="lpBuffer"></param>
+        ///// <param name="lpdwBufferLength"></param>
+        ///// <returns></returns>
+        //[DllImport("wininet.dll", SetLastError = true)]
+        //private static extern Boolean InternetSetOption(IntPtr hInternet, Int32 dwOption, IntPtr lpBuffer, Int32 lpdwBufferLength);
 
-        /// <summary>获取IE代理设置</summary>
-        public static String GetIEProxy()
-        {
-            using (var key = Registry.CurrentUser.OpenSubKey("Software\\Microsoft\\Windows\\CurrentVersion\\Internet Settings", true))
-            {
-                if (key == null) return null;
+        ///// <summary>获取IE代理设置</summary>
+        //public static String GetIEProxy()
+        //{
+        //    using (var key = Registry.CurrentUser.OpenSubKey("Software\\Microsoft\\Windows\\CurrentVersion\\Internet Settings", true))
+        //    {
+        //        if (key == null) return null;
 
-                var obj = key.GetValue("ProxyEnable", 0);
-                if (obj == null || (Int32)obj == 0) return null;
+        //        var obj = key.GetValue("ProxyEnable", 0);
+        //        if (obj == null || (Int32)obj == 0) return null;
 
-                obj = key.GetValue("ProxyServer");
-                return obj == null ? null : "" + obj;
-            }
-        }
+        //        obj = key.GetValue("ProxyServer");
+        //        return obj == null ? null : "" + obj;
+        //    }
+        //}
 
-        /// <summary>设置IE代理。传入空地址取消代理设置</summary>
-        /// <param name="proxy">地址与端口以冒号分开</param>
-        /// <param name="proxyOverride">代理是否跳过本地地址</param>
-        public static void SetIEProxy(String proxy, Boolean proxyOverride = true)
-        {
-            const Int32 INTERNET_OPTION_PROXY = 38;
-            const Int32 INTERNET_OPEN_TYPE_PROXY = 3;
-            const Int32 INTERNET_OPEN_TYPE_DIRECT = 1;
+        ///// <summary>设置IE代理。传入空地址取消代理设置</summary>
+        ///// <param name="proxy">地址与端口以冒号分开</param>
+        ///// <param name="proxyOverride">代理是否跳过本地地址</param>
+        //public static void SetIEProxy(String proxy, Boolean proxyOverride = true)
+        //{
+        //    const Int32 INTERNET_OPTION_PROXY = 38;
+        //    const Int32 INTERNET_OPEN_TYPE_PROXY = 3;
+        //    const Int32 INTERNET_OPEN_TYPE_DIRECT = 1;
 
-            var isCancel = String.IsNullOrEmpty(proxy);
+        //    var isCancel = String.IsNullOrEmpty(proxy);
 
-            Struct_INTERNET_PROXY_INFO info;
+        //    Struct_INTERNET_PROXY_INFO info;
 
-            // 填充结构体 
-            info.dwAccessType = !isCancel ? INTERNET_OPEN_TYPE_PROXY : INTERNET_OPEN_TYPE_DIRECT;
-            info.proxy = Marshal.StringToHGlobalAnsi("" + proxy);
-            info.proxyBypass = Marshal.StringToHGlobalAnsi("local");
+        //    // 填充结构体 
+        //    info.dwAccessType = !isCancel ? INTERNET_OPEN_TYPE_PROXY : INTERNET_OPEN_TYPE_DIRECT;
+        //    info.proxy = Marshal.StringToHGlobalAnsi("" + proxy);
+        //    info.proxyBypass = Marshal.StringToHGlobalAnsi("local");
 
-            // 分配内存
-            var ptr = Marshal.AllocCoTaskMem(Marshal.SizeOf(info));
+        //    // 分配内存
+        //    var ptr = Marshal.AllocCoTaskMem(Marshal.SizeOf(info));
 
-            // 获取结构体指针
-            Marshal.StructureToPtr(info, ptr, true);
+        //    // 获取结构体指针
+        //    Marshal.StructureToPtr(info, ptr, true);
 
-            var key = Registry.CurrentUser.OpenSubKey("Software\\Microsoft\\Windows\\CurrentVersion\\Internet Settings", true);
-            if (!isCancel)
-            {
-                key.SetValue("ProxyServer", proxy);
-                key.SetValue("ProxyEnable", 1);
-                if (proxyOverride)
-                    key.SetValue("ProxyOverride", "<local>");
-                else
-                    key.DeleteValue("ProxyOverride");
-            }
-            else
-                key.SetValue("ProxyEnable", 0);
-            key.Close();
+        //    var key = Registry.CurrentUser.OpenSubKey("Software\\Microsoft\\Windows\\CurrentVersion\\Internet Settings", true);
+        //    if (!isCancel)
+        //    {
+        //        key.SetValue("ProxyServer", proxy);
+        //        key.SetValue("ProxyEnable", 1);
+        //        if (proxyOverride)
+        //            key.SetValue("ProxyOverride", "<local>");
+        //        else
+        //            key.DeleteValue("ProxyOverride");
+        //    }
+        //    else
+        //        key.SetValue("ProxyEnable", 0);
+        //    key.Close();
 
-            if (!Runtime.Mono)
-            {
-                InternetSetOption(IntPtr.Zero, INTERNET_OPTION_PROXY, ptr, Marshal.SizeOf(info));
+        //    if (!Runtime.Mono)
+        //    {
+        //        InternetSetOption(IntPtr.Zero, INTERNET_OPTION_PROXY, ptr, Marshal.SizeOf(info));
 
-                const Int32 INTERNET_OPTION_REFRESH = 0x000025;
-                const Int32 INTERNET_OPTION_SETTINGS_CHANGED = 0x000027;
-                InternetSetOption(IntPtr.Zero, INTERNET_OPTION_SETTINGS_CHANGED, IntPtr.Zero, 0);
-                InternetSetOption(IntPtr.Zero, INTERNET_OPTION_REFRESH, IntPtr.Zero, 0);
-            }
-        }
+        //        const Int32 INTERNET_OPTION_REFRESH = 0x000025;
+        //        const Int32 INTERNET_OPTION_SETTINGS_CHANGED = 0x000027;
+        //        InternetSetOption(IntPtr.Zero, INTERNET_OPTION_SETTINGS_CHANGED, IntPtr.Zero, 0);
+        //        InternetSetOption(IntPtr.Zero, INTERNET_OPTION_REFRESH, IntPtr.Zero, 0);
+        //    }
+        //}
         #endregion
     }
 

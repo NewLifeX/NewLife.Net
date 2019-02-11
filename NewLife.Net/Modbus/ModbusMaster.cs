@@ -79,7 +79,7 @@ namespace NewLife.Net.Modbus
             lock (this)
             {
                 // 预期返回指令长度，传入参数expect没有考虑头部和校验位
-                var st = Transport as SerialTransport;
+                //var st = Transport as SerialTransport;
                 //if (st != null) st.FrameSize = expect + ModbusEntity.NO_DATA_LENGTH;
                 Transport.Send(buf);
 
