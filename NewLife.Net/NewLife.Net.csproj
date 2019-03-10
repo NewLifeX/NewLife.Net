@@ -21,7 +21,7 @@
     <Authors>$(Company)</Authors>
     <ProjectUrl>https://github.com/NewLifeX</ProjectUrl>
     <PackageIconUrl>http://www.NewLifeX.com/favicon.ico</PackageIconUrl>
-    <RepositoryUrl>https://github.com/NewLifeX/X</RepositoryUrl>
+    <RepositoryUrl>https://github.com/NewLifeX/NewLife.Net</RepositoryUrl>
     <RepositoryType>git</RepositoryType>
     <PackageTags>新生命团队;X组件;NewLife;$(AssemblyName)</PackageTags>
     <AllowedOutputExtensionsInPackageBuildOutputFolder>$(AllowedOutputExtensionsInPackageBuildOutputFolder);.pdb</AllowedOutputExtensionsInPackageBuildOutputFolder>
