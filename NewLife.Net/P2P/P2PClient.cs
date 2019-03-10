@@ -86,7 +86,7 @@ namespace NewLife.Net.P2P
         {
             var session = sender as ISocketSession;
 
-            var str = e.Stream.ToStr();
+            var str = e.Packet.ToStr();
             var remote = "" + session.Remote.EndPoint;
             if (remote == "" + HoleServer)
             {
@@ -179,7 +179,7 @@ namespace NewLife.Net.P2P
             //WriteLog("数据到来：{0} {1}", e.RemoteIPEndPoint, e.GetString());
 
             //var ss = e.GetString().Split(":");
-            var ss = e.Stream.ToStr().Split(":");
+            var ss = e.Packet.ToStr().Split(":");
             if (ss == null || ss.Length < 2) return;
 
             if (!IPAddress.TryParse(ss[0], out var address)) return;
@@ -217,7 +217,7 @@ namespace NewLife.Net.P2P
         void client_Received2(Object sender, ReceivedEventArgs e)
         {
             var session = sender as ISocketSession;
-            WriteLog("数据到来2：{0} {1}", session.Remote, e.Stream.ToStr());
+            WriteLog("数据到来2：{0} {1}", session.Remote, e.Packet.ToStr());
         }
         #endregion
 

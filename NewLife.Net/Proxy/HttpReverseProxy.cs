@@ -62,7 +62,7 @@ namespace NewLife.Net.Proxy
             protected override void OnReceive(ReceivedEventArgs e)
             {
                 // 解析请求头
-                var stream = e.Stream;
+                var stream = e.Packet.GetStream();
                 var entity = HttpHeader.Read(stream, HttpHeaderReadMode.Request);
                 if (entity == null)
                 {
@@ -104,7 +104,7 @@ namespace NewLife.Net.Proxy
                 ms.Position = 0;
 
                 //e.Stream = ms;
-                e.Data = ms.ToArray();
+                e.Packet = ms.ToArray();
 
                 base.OnReceive(e);
             }

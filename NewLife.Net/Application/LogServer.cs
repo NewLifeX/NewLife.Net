@@ -41,9 +41,9 @@ namespace NewLife.Net.Application
             /// <param name="e"></param>
             protected override void OnReceive(ReceivedEventArgs e)
             {
-                if (e.Length == 0) return;
+                if (e.Packet.Total == 0) return;
 
-                WriteLog("{0}", e.ToStr());
+                WriteLog("{0}", e.Packet.ToStr());
             }
         }
     }

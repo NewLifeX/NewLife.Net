@@ -1,7 +1,5 @@
 ﻿using System;
-using System.IO;
-using System.Net.Sockets;
-using NewLife.Net.Sockets;
+using NewLife.Data;
 
 namespace NewLife.Net
 {
@@ -22,10 +20,10 @@ namespace NewLife.Net
         }
         /// <summary>数据返回</summary>
         /// <param name="session"></param>
-        /// <param name="stream"></param>
-        protected override void OnReceive(INetSession session, Stream stream)
+        /// <param name="pk"></param>
+        protected override void OnReceive(INetSession session, Packet pk)
         {
-            var sss = stream.ToStr();
+            var sss = pk.ToStr();
             if (sss == "<policy-file-request/>\0")
             {
                 session.Send(System.Text.Encoding.UTF8.GetBytes(_Policy.ToCharArray()));

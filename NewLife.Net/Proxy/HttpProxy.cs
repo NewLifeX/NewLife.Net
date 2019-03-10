@@ -2,8 +2,6 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Net;
-using System.Runtime.InteropServices;
-using Microsoft.Win32;
 using NewLife.Net.Http;
 
 namespace NewLife.Net.Proxy
@@ -106,7 +104,7 @@ namespace NewLife.Net.Proxy
             /// <param name="e"></param>
             protected override void OnReceive(ReceivedEventArgs e)
             {
-                if (e.Length == 0)
+                if (e.Packet.Total == 0)
                 {
                     base.OnReceive(e);
                     return;
@@ -115,7 +113,7 @@ namespace NewLife.Net.Proxy
                 var pxy = Host as HttpProxy;
                 #region 解析请求头
                 // 解析请求头。
-                var stream = e.Stream;
+                var stream = e.Packet.GetStream() as Stream;
                 // 当前正在处理的未完整的头部，浏览器可能把请求头分成几块发过来
                 var entity = UnFinishedRequest;
                 // 如果当前请求为空，说明这是第一个数据包，可能包含头部
@@ -129,7 +127,7 @@ namespace NewLife.Net.Proxy
                         var he = new HttpProxyEventArgs(Request, stream);
                         if (pxy.RaiseEvent(this, EventKind.OnRequestBody, he)) return;
                         //e.Stream = he.Stream;
-                        e.Data = he.Stream.ReadBytes();
+                        e.Packet = he.Stream.ReadBytes();
 
                         base.OnReceive(e);
 
@@ -158,7 +156,7 @@ namespace NewLife.Net.Proxy
                     var he = new HttpProxyEventArgs(Request, stream);
                     if (pxy.RaiseEvent(this, EventKind.OnRequestBody, he)) return;
                     //e.Stream = he.Stream;
-                    e.Data = he.Stream.ReadBytes();
+                    e.Packet = he.Stream.ReadBytes();
 
                     base.OnReceive(e);
 
@@ -198,7 +196,7 @@ namespace NewLife.Net.Proxy
                 ms.Position = 0;
 
                 //e.Stream = ms;
-                e.Data = ms.ToArray();
+                e.Packet = ms.ToArray();
                 #endregion
 
                 base.OnReceive(e);
@@ -371,7 +369,7 @@ namespace NewLife.Net.Proxy
                 var parseBody = pxy.EnableCache || pxy.GetHandler(EventKind.OnResponseBody) != null;
 
                 var entity = UnFinishedResponse;
-                var stream = e.Stream;
+                var stream = e.Packet.GetStream() as Stream;
                 if (parseHeader || parseBody)
                 {
                     #region 解析响应头
@@ -386,15 +384,16 @@ namespace NewLife.Net.Proxy
                             var he = new HttpProxyEventArgs(Response, stream);
                             if (pxy.RaiseEvent(this, EventKind.OnResponseBody, he)) return;
                             //e.Stream = he.Stream;
-                            e.Data = he.Stream.ReadBytes();
+                            e.Packet = he.Stream.ReadBytes();
 
                             // 如果现在正在缓存之中，那么也罢这些非头部数据一并拷贝到缓存里面
                             if (cacheItem != null)
                             {
-                                var p = e.Stream.Position;
-                                e.Stream.CopyTo(cacheItem.Stream);
-                                var count = e.Stream.Position = p;
-                                e.Stream.Position = p;
+                                var ms = e.Packet.GetStream();
+                                var p = ms.Position;
+                                ms.CopyTo(cacheItem.Stream);
+                                var count = ms.Position = p;
+                                ms.Position = p;
                                 //WriteDebugLog("[{0}] {1} 缓存数据[{2}]", ID, Request.RawUrl, count);
                             }
 
@@ -428,15 +427,16 @@ namespace NewLife.Net.Proxy
                         if (pxy.RaiseEvent(this, EventKind.OnResponseBody, he)) return;
                         base.OnReceiveRemote(e);
                         //e.Stream = he.Stream;
-                        e.Data = he.Stream.ReadBytes();
+                        e.Packet = he.Stream.ReadBytes();
 
                         // 如果现在正在缓存之中，那么也罢这些非头部数据一并拷贝到缓存里面
                         if (cacheItem != null)
                         {
-                            var p = e.Stream.Position;
-                            e.Stream.CopyTo(cacheItem.Stream);
-                            var count = e.Stream.Position = p;
-                            e.Stream.Position = p;
+                            var ms = e.Packet.GetStream();
+                            var p = ms.Position;
+                            ms.CopyTo(cacheItem.Stream);
+                            var count = ms.Position = p;
+                            ms.Position = p;
                             //WriteDebugLog("[{0}] {1} 缓存数据[{2}]", ID, Request.RawUrl, count);
                         }
 
@@ -482,15 +482,16 @@ namespace NewLife.Net.Proxy
 
                     //stream = ms;
                     //e.Stream = ms;
-                    e.Data = ms.ToArray();
+                    e.Packet = ms.ToArray();
                 }
 
                 if (cacheItem != null)
                 {
-                    var p = e.Stream.Position;
-                    e.Stream.CopyTo(cacheItem.Stream);
-                    var count = e.Stream.Position = p;
-                    e.Stream.Position = p;
+                    var ms = e.Packet.GetStream();
+                    var p = ms.Position;
+                    ms.CopyTo(cacheItem.Stream);
+                    var count = ms.Position = p;
+                    ms.Position = p;
                     //WriteDebugLog("[{0}] {1} 增加缓存[{2}]", ID, Request.RawUrl, count);
                 }
                 #endregion

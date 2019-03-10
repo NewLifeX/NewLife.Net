@@ -35,11 +35,16 @@
     <Prefer32Bit>false</Prefer32Bit>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="NewLife.Core, Version=8.0.6965.42074, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\NewLife.Core.8.0.6965.42074\lib\net45\NewLife.Core.dll</HintPath>
+    <Reference Include="NewLife.Core, Version=8.1.7008.34076, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\NewLife.Core.8.1.2019.310\lib\net45\NewLife.Core.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
+    <Reference Include="System.IO.Compression" />
+    <Reference Include="System.ServiceProcess" />
+    <Reference Include="System.Web" />
+    <Reference Include="System.Web.Extensions" />
+    <Reference Include="System.Windows.Forms" />
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Data.DataSetExtensions" />
     <Reference Include="Microsoft.CSharp" />

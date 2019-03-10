@@ -69,16 +69,16 @@ namespace NewLife.Net.Proxy
 
             //WriteLog("客户端[{0}] {1}", e.Length, e.ToHex(16));
 
-            var len = e.Length;
+            var len = e.Packet.Total;
             if (len > 0 || len == 0 && ExchangeEmptyData)
             {
-                if (len > 0) WriteDebugLog("客户端", e.Stream);
+                if (len > 0) WriteDebugLog("客户端", e.Packet);
 
                 // 如果未建立到远程服务器链接，则建立
                 if (RemoteServer == null) StartRemote(e);
 
                 // 如果已存在到远程服务器的链接，则把数据发向远程服务器
-                if (RemoteServer != null) SendRemote(e.Stream);
+                if (RemoteServer != null) SendRemote(e.Packet);
             }
         }
 
@@ -160,8 +160,8 @@ namespace NewLife.Net.Proxy
         /// <param name="e"></param>
         protected virtual void OnReceiveRemote(ReceivedEventArgs e)
         {
-            var len = e.Length;
-            if (len > 0) WriteDebugLog("服务端", e.Stream);
+            var len = e.Packet.Total;
+            if (len > 0) WriteDebugLog("服务端", e.Packet);
 
             if (len > 0 || len == 0 && ExchangeEmptyData)
             {
@@ -172,7 +172,7 @@ namespace NewLife.Net.Proxy
                 {
                     try
                     {
-                        Send(e.Stream);
+                        Send(e.Packet);
                     }
                     catch (Exception ex)
                     {
@@ -188,14 +188,12 @@ namespace NewLife.Net.Proxy
 
         #region 发送
         /// <summary>发送数据</summary>
-        /// <param name="buffer">缓冲区</param>
-        /// <param name="offset">位移</param>
-        /// <param name="size">写入字节数</param>
-        public virtual Boolean SendRemote(Byte[] buffer, Int32 offset = 0, Int32 size = -1)
+        /// <param name="pk">缓冲区</param>
+        public virtual Boolean SendRemote(Packet pk)
         {
             try
             {
-                return RemoteServer.Send(new Packet(buffer, offset, size));
+                return RemoteServer.Send(pk);
             }
             catch { Dispose(); throw; }
         }

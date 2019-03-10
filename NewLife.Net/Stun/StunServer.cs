@@ -4,7 +4,7 @@ using System.IO;
 using System.Net;
 using System.Net.Sockets;
 using System.Reflection;
-using NewLife.Net.Sockets;
+using NewLife.Data;
 using NewLife.Reflection;
 
 namespace NewLife.Net.Stun
@@ -106,15 +106,15 @@ namespace NewLife.Net.Stun
         #region 方法
         /// <summary>接收到数据时</summary>
         /// <param name="session"></param>
-        /// <param name="stream"></param>
-        protected override void OnReceive(INetSession session, Stream stream)
+        /// <param name="pk"></param>
+        protected override void OnReceive(INetSession session, Packet pk)
         {
-            if (stream.Length > 0)
+            if (pk.Total > 0)
             {
                 var remote = session.Remote;
                 //if (remote == null && session != null) remote = session.RemoteEndPoint;
 
-                var request = StunMessage.Read(stream);
+                var request = StunMessage.Read(pk.GetStream());
                 WriteLog("{0} {1} {2}{3}", request.Type, remote, request.ChangeIP ? " ChangeIP" : "", request.ChangePort ? " ChangePort" : "");
 
                 // 如果是兄弟服务器发过来的，修正响应地址
@@ -179,10 +179,12 @@ namespace NewLife.Net.Stun
         /// <returns></returns>
         protected void OnBind(StunMessage request, ISocketSession session)
         {
-            var rs = new StunMessage();
-            rs.Type = StunMessageType.BindingResponse;
-            rs.TransactionID = request.TransactionID.ReadBytes();
-            rs.MappedAddress = session.Remote.EndPoint;
+            var rs = new StunMessage
+            {
+                Type = StunMessageType.BindingResponse,
+                TransactionID = request.TransactionID.ReadBytes(),
+                MappedAddress = session.Remote.EndPoint
+            };
             //rs.SourceAddress = session.GetRelativeEndPoint(remote.Address);
             if (Public != null)
             {

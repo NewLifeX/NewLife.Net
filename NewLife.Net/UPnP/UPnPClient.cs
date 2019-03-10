@@ -125,7 +125,7 @@ namespace NewLife.Net.UPnP
         //List<String> process = new List<String>();
         void Udp_Received(Object sender, ReceivedEventArgs e)
         {
-            var content = e.Stream.ToStr();
+            var content = e.Packet.ToStr();
             if (String.IsNullOrEmpty(content)) return;
 
             //var udp = e as UdpReceivedEventArgs;

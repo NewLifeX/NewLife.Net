@@ -1,6 +1,5 @@
 ﻿using System;
-using System.IO;
-using NewLife.Net.Sockets;
+using NewLife.Data;
 
 namespace NewLife.Net.Application
 {
@@ -18,15 +17,16 @@ namespace NewLife.Net.Application
 
         /// <summary>已重载。</summary>
         /// <param name="session"></param>
-        /// <param name="stream"></param>
-        protected override void OnReceive(INetSession session, Stream stream)
+        /// <param name="pk"></param>
+        protected override void OnReceive(INetSession session, Packet pk)
         {
-            if (stream.Length == 0) return;
+            var count = pk.Total;
+            if (count == 0) return;
 
-            if (stream.Length > 100)
-                WriteLog("Discard {0} [{1}] {2}...", session.Remote, stream.Length, stream.ReadBytes(1000).ToStr());
+            if (count > 100)
+                WriteLog("Discard {0} [{1}] {2}...", session.Remote, count, pk.ReadBytes(1000).ToStr());
             else
-                WriteLog("Discard {0} [{1}] {2}", session.Remote, stream.Length, stream.ToStr());
+                WriteLog("Discard {0} [{1}] {2}", session.Remote, count, pk.ToStr());
         }
     }
 }

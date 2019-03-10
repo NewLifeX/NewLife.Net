@@ -1,10 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.IO;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using NewLife.Collections;
+using NewLife.Data;
 using NewLife.Log;
 #if !NET4
 using TaskEx = System.Threading.Tasks.Task;
@@ -133,17 +131,17 @@ namespace NewLife.Net.DNS
             _Clients = null;
         }
 
-        DictionaryCache<String, DNSEntity> cache = new DictionaryCache<String, DNSEntity>() { Expire = 600/*, Asynchronous = true, CacheDefault = false*/ };
+        readonly DictionaryCache<String, DNSEntity> cache = new DictionaryCache<String, DNSEntity>() { Expire = 600/*, Asynchronous = true, CacheDefault = false*/ };
 
         /// <summary>接收处理</summary>
         /// <param name="session"></param>
-        /// <param name="stream"></param>
-        protected override void OnReceive(INetSession session, Stream stream)
+        /// <param name="pk"></param>
+        protected override void OnReceive(INetSession session, Packet pk)
         {
             var isTcp = session.Session.Local.IsTcp;
 
             // 解析
-            var request = DNSEntity.Read(stream, isTcp);
+            var request = DNSEntity.Read(pk.GetStream(), isTcp);
 
             var response = Request(session, request);
             if (response != null)

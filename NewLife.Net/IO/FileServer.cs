@@ -134,10 +134,10 @@ namespace NewLife.Net.IO
         {
             //base.OnReceive(e);
 
-            var stream = e.Stream;
+            var stream = e.Packet.GetStream();
 
             // 第一个数据包解析头部
-            if (e.Length > 0 && Inf == null)
+            if (e.Packet.Total > 0 && Inf == null)
             {
                 var fi = new FileFormat();
                 try

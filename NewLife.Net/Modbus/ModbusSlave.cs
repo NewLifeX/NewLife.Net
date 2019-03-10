@@ -15,6 +15,7 @@
 #endregion
 
 using System;
+using NewLife.Data;
 
 namespace NewLife.Net.Modbus
 {
@@ -89,7 +90,7 @@ namespace NewLife.Net.Modbus
             var name = transport.ToString();
 
 #if !MF
-            transport.Received += (s, e) => { e.Data = Process(e.Data); };
+            transport.Received += (s, e) => { e.Packet = Process(e.Packet); };
 #else
             transport.Received += (ts, data) => { return Process(data); };
 #endif
@@ -101,9 +102,9 @@ namespace NewLife.Net.Modbus
         }
 
         /// <summary>处理Modbus消息</summary>
-        /// <param name="buf"></param>
+        /// <param name="pk"></param>
         /// <returns></returns>
-        public virtual Byte[] Process(Byte[] buf)
+        public virtual Packet Process(Packet pk)
         {
 #if DEBUG
             var str = "Request :";
@@ -115,16 +116,16 @@ namespace NewLife.Net.Modbus
 #endif
 
             // 处理
-            var entity = new ModbusEntity().Parse(buf);
+            var entity = new ModbusEntity().Parse(pk.ReadBytes());
             // 检查主机
             if (entity.Host != 0 && entity.Host != Host) return null;
             // 检查Crc校验
-            var crc = buf.Crc(0, buf.Length - 2);
+            var crc = pk.Data.Crc(pk.Offset, pk.Total - 2);
             if (crc != entity.Crc)
                 entity.SetError(Errors.CrcError);
             else
                 entity = Process(entity);
-            buf = entity.ToArray();
+            pk = entity.ToArray();
 
 #if DEBUG
             str = "Response:";
@@ -135,7 +136,7 @@ namespace NewLife.Net.Modbus
             WriteLine(str);
             WriteLine("");
 #endif
-            return buf;
+            return pk;
         }
 
         /// <summary>处理Modbus消息</summary>

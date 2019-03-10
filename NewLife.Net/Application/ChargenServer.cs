@@ -1,8 +1,6 @@
 ﻿using System;
-using System.IO;
-using System.Net.Sockets;
 using System.Threading;
-using NewLife.Net.Sockets;
+using NewLife.Data;
 
 namespace NewLife.Net.Application
 {
@@ -32,9 +30,11 @@ namespace NewLife.Net.Application
             if (remote != null && remote.Address.IsAny()) return null;
 
             // 使用多线程
-            var thread = new Thread(LoopSend);
-            thread.Name = "Chargen.LoopSend";
-            thread.IsBackground = true;
+            var thread = new Thread(LoopSend)
+            {
+                Name = "Chargen.LoopSend",
+                IsBackground = true
+            };
             //thread.Priority = ThreadPriority.Lowest;
             thread.Start(session);
 
@@ -44,15 +44,16 @@ namespace NewLife.Net.Application
 
         /// <summary>已重载。</summary>
         /// <param name="session"></param>
-        /// <param name="stream"></param>
-        protected override void OnReceive(INetSession session, Stream stream)
+        /// <param name="pk"></param>
+        protected override void OnReceive(INetSession session, Packet pk)
         {
-            if (stream.Length == 0) return;
+            var count = pk.Total;
+            if (count == 0) return;
 
-            if (stream.Length > 100)
-                WriteLog("Chargen {0} [{1}]", session.Remote, stream.Length);
+            if (count > 100)
+                WriteLog("Chargen {0} [{1}]", session.Remote, count);
             else
-                WriteLog("Chargen {0} [{1}] {2}", session.Remote, stream.Length, stream.ToStr());
+                WriteLog("Chargen {0} [{1}] {2}", session.Remote, count, pk.ToStr());
         }
 
         /// <summary>触发异常</summary>
@@ -98,7 +99,7 @@ namespace NewLife.Net.Application
             }
         }
 
-        Int32 Length = 72;
+        readonly Int32 Length = 72;
         Int32 Index = 0;
 
         void Send(ISocketSession session)

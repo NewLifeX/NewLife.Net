@@ -1,8 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.IO;
 using System.Threading;
-using NewLife.Net.Sockets;
+using NewLife.Data;
 
 namespace NewLife.Net.P2P
 {
@@ -29,12 +28,12 @@ namespace NewLife.Net.P2P
         #region 方法
         /// <summary>收到数据时</summary>
         /// <param name="session"></param>
-        /// <param name="stream"></param>
-        protected override void OnReceive(INetSession session, Stream stream)
+        /// <param name="pk"></param>
+        protected override void OnReceive(INetSession session, Packet pk)
         {
             var remoteEP = session.Remote.EndPoint;
 
-            var str = stream.ToStr();
+            var str = pk.ToStr();
             WriteLog("");
             WriteLog(remoteEP + "=>" + session.Session.Local.EndPoint + " " + str);
 
@@ -46,9 +45,11 @@ namespace NewLife.Net.P2P
                 if (!Clients.TryGetValue(name, out var ns))
                 {
                     // 集合里面没有，认为是发起邀请方，做好记录
-                    ns = new NetSession();
-                    //ns.Server = sender as ISocketServer;
-                    ns.Session = session.Session;
+                    ns = new NetSession
+                    {
+                        //ns.Server = sender as ISocketServer;
+                        Session = session.Session
+                    };
                     //ns.ClientEndPoint = remoteEP;
                     Clients[name] = ns;
                     session.OnDisposed += (s, e2) => ns.Dispose();

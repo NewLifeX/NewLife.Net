@@ -71,9 +71,10 @@ namespace NewLife.Net.DNS
 
         private void Client_Received(Object sender, ReceivedEventArgs e)
         {
-            if (e.Length == 0) return;
+            var pk = e.Packet;
+            if (pk.Total == 0) return;
 
-            var dns = DNSEntity.Read(e.Stream, Client.Local.IsTcp);
+            var dns = DNSEntity.Read(pk.GetStream(), Client.Local.IsTcp);
             OnReceive(dns);
         }
 

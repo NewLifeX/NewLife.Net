@@ -51,7 +51,7 @@ namespace NewLife.Net.Application
         static void OnReceived(Object sender, ReceivedEventArgs e)
         {
             var session = sender as ISocketSession;
-            Console.WriteLine("客户端{0} 收到 [{1}]: {2}", session, e.Stream.Length, e.Stream.ToStr());
+            Console.WriteLine("客户端{0} 收到 [{1}]: {2}", session, e.Packet.Total, e.Packet.ToStr());
 
             _are.Set();
         }
@@ -238,7 +238,7 @@ namespace NewLife.Net.Application
 
         static void server_Received(Object sender, ReceivedEventArgs e)
         {
-            OnReceive(sender as ISocketSession, e.Stream);
+            OnReceive(sender as ISocketSession, e.Packet.GetStream());
         }
 
         /// <summary>已重载。</summary>
