@@ -29,3 +29,4 @@ bld/
 /BinNC
 /BinRpc/netcoreapp2.0
 /BinTest
+/BinRpc

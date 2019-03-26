@@ -41,9 +41,11 @@ namespace EchoTest
                 Port = 1234,
                 Log = XTrace.Log,
                 SessionLog = XTrace.Log,
-                //SocketLog = XTrace.Log,
-                //LogSend = true,
-                //LogReceive = true,
+#if DEBUG
+                SocketLog = XTrace.Log,
+                LogSend = true,
+                LogReceive = true,
+#endif
             };
             svr.Start();
 

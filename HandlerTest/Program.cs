@@ -43,20 +43,17 @@ namespace HandlerTest
             var svr = new NetServer
             {
                 Port = 1234,
-                Log = XTrace.Log
+                Log = XTrace.Log,
+#if DEBUG
+                SocketLog = XTrace.Log,
+                LogSend = true,
+                LogReceive = true,
+#endif
             };
             //svr.Add(new LengthFieldCodec { Size = 4 });
             svr.Add<StandardCodec>();
             //svr.Add<EchoHandler>();
             svr.Add(new EchoHandler { Counter = _counter });
-
-#if DEBUG
-            // 打开原始数据日志
-            var ns = svr.Server;
-            ns.Log = XTrace.Log;
-            ns.LogSend = true;
-            ns.LogReceive = true;
-#endif
 
             svr.Start();
 
@@ -72,6 +69,8 @@ namespace HandlerTest
             //var uri = new NetUri("tcp://net.newlifex.com:1234");
             var client = uri.CreateRemote();
             client.Log = XTrace.Log;
+            client.LogSend = true;
+            client.LogReceive = true;
             client.Received += (s, e) =>
             {
                 var pk = e.Message as Packet;
@@ -79,11 +78,6 @@ namespace HandlerTest
             };
             //client.Add(new LengthFieldCodec { Size = 4 });
             client.Add<StandardCodec>();
-
-            // 打开原始数据日志
-            var ns = client;
-            ns.LogSend = true;
-            ns.LogReceive = true;
 
             client.Open();
 

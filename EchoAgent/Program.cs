@@ -34,7 +34,12 @@ namespace EchoAgent
             var svr = new MyNetServer
             {
                 Port = 1234,
-                Log = XTrace.Log
+                Log = XTrace.Log,
+#if DEBUG
+                SocketLog = XTrace.Log,
+                LogSend = true,
+                LogReceive = true,
+#endif
             };
             svr.Start();
 
@@ -64,6 +69,8 @@ namespace EchoAgent
         /// <param name="ns"></param>
         private void ShowStat(NetServer ns)
         {
+            if (ns == null) return;
+
             var msg = ns.GetStat();
             if (msg == _last) return;
 
@@ -76,6 +83,8 @@ namespace EchoAgent
         /// <param name="ns"></param>
         private void SendTime(NetServer ns)
         {
+            if (ns == null) return;
+
             var str = DateTime.Now.ToFullString() + Environment.NewLine;
             var buf = str.GetBytes();
             ns.SendAllAsync(buf);
