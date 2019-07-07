@@ -1,15 +1,15 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
-    <TargetFrameworks>net45;netstandard2.0</TargetFrameworks>
+    <TargetFrameworks>net45;netstandard2.0;net40</TargetFrameworks>
     <AssemblyName>NewLife.Net</AssemblyName>
     <RootNamespace>NewLife.Net</RootNamespace>
     <AssemblyTitle>新生命网络库</AssemblyTitle>
     <Description>网络通讯基础框架及各种协议实现</Description>
     <Company>新生命开发团队</Company>
     <Copyright>版权所有(C) 新生命开发团队 2002~2019</Copyright>
-    <Version>3.5.2019.0623</Version>
-    <FileVersion>3.5.2019.0623</FileVersion>
-    <AssemblyVersion>3.5.*</AssemblyVersion>
+    <Version>3.6.2019.0707</Version>
+    <FileVersion>3.6.2019.0707</FileVersion>
+    <AssemblyVersion>3.6.*</AssemblyVersion>
     <Deterministic>false</Deterministic>
     <OutputPath>..\Bin</OutputPath>
     <DocumentationFile>$(OutputPath)\$(TargetFramework)\$(AssemblyName).xml</DocumentationFile>
@@ -24,16 +24,12 @@
     <RepositoryUrl>https://github.com/NewLifeX/NewLife.Net</RepositoryUrl>
     <RepositoryType>git</RepositoryType>
     <PackageTags>新生命团队;X组件;NewLife;$(AssemblyName)</PackageTags>
-    <PackageReleaseNotes>优化Json序列化对列表和字段的支持</PackageReleaseNotes>
+    <PackageReleaseNotes>合并NET40分支</PackageReleaseNotes>
     <AllowedOutputExtensionsInPackageBuildOutputFolder>$(AllowedOutputExtensionsInPackageBuildOutputFolder);.pdb</AllowedOutputExtensionsInPackageBuildOutputFolder>
     <PublishRepositoryUrl>true</PublishRepositoryUrl>
     <EmbedUntrackedSources>true</EmbedUntrackedSources>
     <IncludeSource>true</IncludeSource>
   </PropertyGroup>
-
-  <ItemGroup>
-    <PackageReference Include="Microsoft.SourceLink.GitHub" Version="1.0.0-*" PrivateAssets="All" />
-  </ItemGroup>
 
   <PropertyGroup Condition="'$(TargetFramework)'=='netstandard2.0'">
     <DefineConstants>$(DefineConstants);NETSTANDARD2_0;__CORE__</DefineConstants>
@@ -41,6 +37,10 @@
 
   <PropertyGroup Condition="'$(TargetFramework)'=='net45'">
     <DefineConstants>$(DefineConstants);__WIN__</DefineConstants>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(TargetFramework)'=='net40'">
+    <DefineConstants>$(DefineConstants);__WIN__;NET4</DefineConstants>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)'=='Debug'">
@@ -96,7 +96,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="NewLife.Core" Version="8.1.2019.618" />
+    <PackageReference Include="NewLife.Core" Version="8.2.2019.706" />
   </ItemGroup>
 
 </Project>
