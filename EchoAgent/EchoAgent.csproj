@@ -34,7 +34,7 @@
     <Prefer32Bit>false</Prefer32Bit>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="NewLife.Core, Version=8.2.7127.16472, Culture=neutral, processorArchitecture=MSIL">
+    <Reference Include="NewLife.Core, Version=8.2.7126.42291, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\packages\NewLife.Core.8.2.2019.706\lib\net45\NewLife.Core.dll</HintPath>
     </Reference>
     <Reference Include="System" />
