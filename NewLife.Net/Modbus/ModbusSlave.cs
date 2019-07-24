@@ -108,9 +108,9 @@ namespace NewLife.Net.Modbus
         {
 #if DEBUG
             var str = "Request :";
-            for (var i = 0; i < buf.Length; i++)
+            for (var i = 0; i < pk.Count; i++)
             {
-                str += " " + buf[i].ToString("X2");
+                str += " " + pk[i].ToString("X2");
             }
             WriteLine(str);
 #endif
@@ -129,9 +129,9 @@ namespace NewLife.Net.Modbus
 
 #if DEBUG
             str = "Response:";
-            for (var i = 0; i < buf.Length; i++)
+            for (var i = 0; i < pk.Count; i++)
             {
-                str += " " + buf[i].ToString("X2");
+                str += " " + pk[i].ToString("X2");
             }
             WriteLine(str);
             WriteLine("");
