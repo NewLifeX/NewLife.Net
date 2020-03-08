@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.ComponentModel;
 using System.IO;
 using NewLife.Model;
@@ -48,18 +49,30 @@ namespace NewLife.Net.SGIP
 
         static SGIPEntity() { Install(); }
 
+        private static IDictionary<SGIPCommands, Type> _commands = new Dictionary<SGIPCommands, Type>();
         static void Install()
         {
-            ObjectContainer.Current.Register<SGIPEntity, SGIPBind>(SGIPCommands.Bind)
-                .Register<SGIPEntity, SGIPDeliver>(SGIPCommands.Deliver)
-                .Register<SGIPEntity, SGIPReport>(SGIPCommands.Report)
-                .Register<SGIPEntity, SGIPSubmit>(SGIPCommands.Submit)
-                .Register<SGIPEntity, SGIPUnbind>(SGIPCommands.Unbind)
-                .Register<SGIPEntity, SGIPResponse>(SGIPCommands.Bind_Resp)
-                .Register<SGIPEntity, SGIPResponse>(SGIPCommands.Deliver_Resp)
-                .Register<SGIPEntity, SGIPResponse>(SGIPCommands.Report_Resp)
-                .Register<SGIPEntity, SGIPResponse>(SGIPCommands.Submit_Resp)
-                .Register<SGIPEntity, SGIPResponse>(SGIPCommands.Unbind_Resp);
+            //ObjectContainer.Current.Register<SGIPEntity, SGIPBind>(SGIPCommands.Bind)
+            //    .Register<SGIPEntity, SGIPDeliver>(SGIPCommands.Deliver)
+            //    .Register<SGIPEntity, SGIPReport>(SGIPCommands.Report)
+            //    .Register<SGIPEntity, SGIPSubmit>(SGIPCommands.Submit)
+            //    .Register<SGIPEntity, SGIPUnbind>(SGIPCommands.Unbind)
+            //    .Register<SGIPEntity, SGIPResponse>(SGIPCommands.Bind_Resp)
+            //    .Register<SGIPEntity, SGIPResponse>(SGIPCommands.Deliver_Resp)
+            //    .Register<SGIPEntity, SGIPResponse>(SGIPCommands.Report_Resp)
+            //    .Register<SGIPEntity, SGIPResponse>(SGIPCommands.Submit_Resp)
+            //    .Register<SGIPEntity, SGIPResponse>(SGIPCommands.Unbind_Resp);
+
+            _commands.Add(SGIPCommands.Bind, typeof(SGIPBind));
+            _commands.Add(SGIPCommands.Deliver, typeof(SGIPDeliver));
+            _commands.Add(SGIPCommands.Report, typeof(SGIPReport));
+            _commands.Add(SGIPCommands.Submit, typeof(SGIPSubmit));
+            _commands.Add(SGIPCommands.Unbind, typeof(SGIPUnbind));
+            _commands.Add(SGIPCommands.Bind_Resp, typeof(SGIPResponse));
+            _commands.Add(SGIPCommands.Deliver_Resp, typeof(SGIPResponse));
+            _commands.Add(SGIPCommands.Report_Resp, typeof(SGIPResponse));
+            _commands.Add(SGIPCommands.Submit_Resp, typeof(SGIPResponse));
+            _commands.Add(SGIPCommands.Unbind_Resp, typeof(SGIPResponse));
         }
         #endregion
 
@@ -78,7 +91,8 @@ namespace NewLife.Net.SGIP
             var len = reader.Read<Int32>();
             var cmd = (SGIPCommands)reader.Read<UInt32>();
 
-            var type = ObjectContainer.Current.ResolveType<SGIPEntity>(cmd);
+            //var type = ObjectContainer.Current.ResolveType<SGIPEntity>(cmd);
+            var type = _commands[cmd];
             var entity = reader.Read(type) as SGIPEntity;
             entity.Command = cmd;
             return entity;
