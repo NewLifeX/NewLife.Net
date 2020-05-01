@@ -96,7 +96,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="NewLife.Core" Version="8.7.2020.308" />
+    <PackageReference Include="NewLife.Core" Version="8.7.2020.501" />
   </ItemGroup>
 
 </Project>

@@ -196,7 +196,7 @@ namespace NewLife.Net.UPnP
         /// <summary>检查缓存的网关</summary>
         void CheckCacheGateway()
         {
-            var p = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, XTrace.TempPath);
+            var p = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, Path.GetTempPath());
             p = Path.Combine(p, "UPnP");
             if (!Directory.Exists(p)) return;
 
@@ -213,7 +213,7 @@ namespace NewLife.Net.UPnP
 
         static String GetCacheFile(String address)
         {
-            var fileName = Path.Combine(Path.Combine(XTrace.TempPath, "UPnP"), String.Format(@"{0}{1}.xml", cacheKey, address));
+            var fileName = Path.Combine(Path.Combine(Path.GetTempPath(), "UPnP"), String.Format(@"{0}{1}.xml", cacheKey, address));
             fileName = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, fileName);
 
             var dir = Path.GetDirectoryName(fileName);

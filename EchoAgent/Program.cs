@@ -9,14 +9,10 @@ namespace EchoAgent
 {
     class Program
     {
-        static void Main(String[] args)
-        {
-            // 引导进入我的服务控制类
-            MyService.ServiceMain();
-        }
+        static void Main(String[] args) => new MyService().Main(args);
     }
 
-    class MyService : AgentServiceBase<MyService>
+    class MyService : ServiceBase
     {
         public MyService()
         {
