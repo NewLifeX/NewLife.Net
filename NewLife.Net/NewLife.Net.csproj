@@ -6,9 +6,9 @@
     <AssemblyTitle>新生命网络库</AssemblyTitle>
     <Description>网络通讯基础框架及各种协议实现</Description>
     <Company>新生命开发团队</Company>
-    <Copyright>版权所有(C) 新生命开发团队 2002~2019</Copyright>
-    <Version>3.6.2019.1117</Version>
-    <FileVersion>3.6.2019.1117</FileVersion>
+    <Copyright>版权所有(C) 新生命开发团队 2002~2020</Copyright>
+    <Version>3.6.2020.0501</Version>
+    <FileVersion>3.6.2020.0501</FileVersion>
     <AssemblyVersion>3.6.*</AssemblyVersion>
     <Deterministic>false</Deterministic>
     <OutputPath>..\Bin</OutputPath>
