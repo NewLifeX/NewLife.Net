@@ -2,7 +2,7 @@
 
   <PropertyGroup>
     <OutputType>Exe</OutputType>
-    <TargetFrameworks>net45;netcoreapp2.0</TargetFrameworks>
+    <TargetFrameworks>net45;netcoreapp3.1</TargetFrameworks>
     <OutputPath>..\BinRpc</OutputPath>
   </PropertyGroup>
 
@@ -19,7 +19,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="NewLife.Core" Version="8.7.2020.501" />
+    <PackageReference Include="NewLife.Core" Version="8.7.2020.601" />
   </ItemGroup>
 
 </Project>

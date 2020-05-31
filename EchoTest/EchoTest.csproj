@@ -2,7 +2,7 @@
 
   <PropertyGroup>
     <OutputType>Exe</OutputType>
-    <TargetFrameworks>net45;netcoreapp2.1</TargetFrameworks>
+    <TargetFrameworks>net45;netcoreapp3.1</TargetFrameworks>
     <Deterministic>false</Deterministic>
     <AssemblyVersion>1.1.*</AssemblyVersion>
     <OutputPath>..\BinEcho</OutputPath>
@@ -21,7 +21,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="NewLife.Core" Version="8.7.2020.501" />
+    <PackageReference Include="NewLife.Core" Version="8.7.2020.601" />
   </ItemGroup>
 
 </Project>
