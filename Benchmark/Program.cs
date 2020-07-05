@@ -98,7 +98,7 @@ namespace Benchmark
             Console.WriteLine("速度：{0:n0}tps", total * 1000L / ms);
 
             //Thread.Sleep(5000);
-            Console.ReadKey(true);
+            //Console.ReadKey(true);
         }
 
         static Int32 WorkOne(NetUri uri, Config cfg, Packet pk)
@@ -107,11 +107,14 @@ namespace Benchmark
             try
             {
                 var client = uri.CreateRemote();
+                (client as SessionBase).MaxAsync = 0;
                 client.Open();
                 for (var k = 0; k < cfg.Times; k++)
                 {
                     client.Send(pk);
-                    count++;
+
+                    var pk2 = client.Receive();
+                    if (pk2.Count > 0) count++;
                 }
             }
             catch { }
@@ -125,13 +128,16 @@ namespace Benchmark
             try
             {
                 var client = uri.CreateRemote();
+                (client as SessionBase).MaxAsync = 0;
                 client.Open();
 
                 await Task.Yield();
                 for (var k = 0; k < cfg.Times; k++)
                 {
                     client.Send(pk);
-                    count++;
+
+                    var pk2 = client.Receive();
+                    if (pk2.Count > 0) count++;
 
                     await Task.Yield();
                 }

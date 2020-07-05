@@ -23,7 +23,7 @@
 
   <ItemGroup>
     <PackageReference Include="NewLife.Agent" Version="8.7.2020.601" />
-    <PackageReference Include="NewLife.Core" Version="8.8.2020.701" />
+    <PackageReference Include="NewLife.Core" Version="8.8.2020.705-beta" />
   </ItemGroup>
 
 </Project>
