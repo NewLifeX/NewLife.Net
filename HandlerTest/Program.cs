@@ -105,8 +105,8 @@ namespace HandlerTest
             var msg = "";
             if (state is NetServer ns)
                 msg = "处理：" + _counter + " " + ns.GetStat();
-            else if (state is ISocketRemote ss)
-                msg = ss.GetStat();
+            //else if (state is ISocketRemote ss)
+            //    msg = ss.GetStat();
 
             if (msg == _last) return;
             _last = msg;

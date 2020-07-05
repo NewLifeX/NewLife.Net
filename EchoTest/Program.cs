@@ -89,8 +89,8 @@ namespace EchoTest
             var msg = "";
             if (state is NetServer ns)
                 msg = ns.GetStat();
-            else if (state is ISocketRemote ss)
-                msg = ss.GetStat();
+            //else if (state is ISocketRemote ss)
+            //    msg = ss.GetStat();
 
             Console.Title = msg;
         }
