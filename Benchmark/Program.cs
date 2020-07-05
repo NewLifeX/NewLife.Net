@@ -42,7 +42,7 @@ namespace Benchmark
         {
             Console.ForegroundColor = ConsoleColor.Yellow;
 
-            Console.WriteLine("压力测试工具：nc [-c 100] [-n 10000] [-s content] tcp://127.0.0.1:1234");
+            Console.WriteLine("压力测试工具：netbench [-c 100] [-n 10000] [-s content] tcp://127.0.0.1:1234");
             Console.WriteLine("\t-c\t并发数。默认100用户");
             Console.WriteLine("\t-n\t请求数。默认每用户请求10000次");
             Console.WriteLine("\t-s\t字符串内容。支持0x开头十六进制");
@@ -60,7 +60,7 @@ namespace Benchmark
             var pk = new Packet(buf);
 
             Console.ForegroundColor = ConsoleColor.Red;
-            Console.WriteLine("NewLife.NC v{0}", AssemblyX.Entry.Version);
+            Console.WriteLine("NewLife.Benchmark v{0}", AssemblyX.Entry.Version);
 
             Console.ForegroundColor = ConsoleColor.Yellow;
             Console.WriteLine("目标：{0}", uri);
