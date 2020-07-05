@@ -1,4 +1,5 @@
 ﻿using System;
+using NewLife;
 using NewLife.Net;
 
 namespace EchoTest
@@ -33,6 +34,29 @@ namespace EchoTest
 
             // 把收到的数据发回去
             Send(e.Packet);
+        }
+
+        /// <summary>断开</summary>
+        /// <param name="disposing"></param>
+        protected override void Dispose(Boolean disposing)
+        {
+#if DEBUG
+            WriteLog("断开：{0}", Remote);
+#endif
+
+            base.Dispose(disposing);
+        }
+
+        /// <summary>出错</summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        protected override void OnError(Object sender, ExceptionEventArgs e)
+        {
+#if DEBUG
+            WriteLog("[{0}]错误：{1}", e.Action, e.Exception?.GetTrue().Message);
+#endif
+
+            base.OnError(sender, e);
         }
     }
 }
