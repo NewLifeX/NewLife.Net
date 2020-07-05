@@ -69,9 +69,6 @@ namespace EchoTest
             };
             client.Open();
 
-            // 定时显示性能数据
-            _timer = new TimerX(ShowStat, client, 100, 1000);
-
             // 循环发送数据
             for (var i = 0; i < 5; i++)
             {
