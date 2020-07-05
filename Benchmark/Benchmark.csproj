@@ -2,12 +2,13 @@
 
   <PropertyGroup>
     <OutputType>Exe</OutputType>
-    <TargetFrameworks>net45;netcoreapp3.1</TargetFrameworks>
-    <AssemblyName>nc</AssemblyName>
+    <TargetFramework>netcoreapp3.1</TargetFramework>
+    <AssemblyName>netbench</AssemblyName>
     <RootNamespace>Benchmark</RootNamespace>
     <Deterministic>false</Deterministic>
     <AssemblyVersion>1.1.*</AssemblyVersion>
-    <OutputPath>..\BinNC\</OutputPath>
+    <OutputPath>..\Bin\Bench\</OutputPath>
+    <AppendTargetFrameworkToOutputPath>false</AppendTargetFrameworkToOutputPath>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(TargetFramework)'=='netstandard2.0'">

@@ -2,8 +2,9 @@
 
   <PropertyGroup>
     <OutputType>Exe</OutputType>
-    <TargetFrameworks>net45;netcoreapp3.1</TargetFrameworks>
-    <OutputPath>..\BinRpc</OutputPath>
+    <TargetFramework>netcoreapp3.1</TargetFramework>
+    <OutputPath>..\Bin\Rpc</OutputPath>
+    <AppendTargetFrameworkToOutputPath>false</AppendTargetFrameworkToOutputPath>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(TargetFramework)'=='netstandard2.0'">
