@@ -13,6 +13,8 @@ namespace Benchmark
         public Int32 Thread { get; set; } = 100;
 
         public String Content { get; set; }
+
+        public Boolean Reply { get; set; }
         #endregion
 
         public void Parse(String[] args)
@@ -41,6 +43,9 @@ namespace Benchmark
                             Content = args[i + 1];
                             i++;
                         }
+                        break;
+                    case "-r":
+                        Reply = true;
                         break;
                 }
             }

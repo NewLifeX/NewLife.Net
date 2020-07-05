@@ -46,6 +46,7 @@ namespace Benchmark
             Console.WriteLine("\t-c\t并发数。默认100用户");
             Console.WriteLine("\t-n\t请求数。默认每用户请求10000次");
             Console.WriteLine("\t-s\t字符串内容。支持0x开头十六进制");
+            Console.WriteLine("\t-r\t等待响应。");
 
             Console.ResetColor();
         }
@@ -113,8 +114,15 @@ namespace Benchmark
                 {
                     client.Send(pk);
 
-                    var pk2 = client.Receive();
-                    if (pk2.Count > 0) count++;
+                    if (cfg.Reply)
+                    {
+                        var pk2 = client.Receive();
+                        if (pk2.Count > 0) count++;
+                    }
+                    else
+                    {
+                        count++;
+                    }
                 }
             }
             catch { }
@@ -136,8 +144,15 @@ namespace Benchmark
                 {
                     client.Send(pk);
 
-                    var pk2 = client.Receive();
-                    if (pk2.Count > 0) count++;
+                    if (cfg.Reply)
+                    {
+                        var pk2 = client.Receive();
+                        if (pk2.Count > 0) count++;
+                    }
+                    else
+                    {
+                        count++;
+                    }
 
                     await Task.Yield();
                 }
