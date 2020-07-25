@@ -25,12 +25,12 @@ namespace NewLife.Net.Sdp
 
             value = value.Trim();
 
-            if (!value.ToLower().StartsWith("t=")) throw new NetException("Invalid SDP Time('t=') value '" + value + "'.");
+            if (!value.ToLower().StartsWith("t=")) throw new XException("Invalid SDP Time('t=') value '" + value + "'.");
 
             value = value.Substring(2);
 
             var values = value.Split(' ');
-            if (values.Length != 2) throw new NetException("Invalid SDP Time('t=') value '" + value + "'.");
+            if (values.Length != 2) throw new XException("Invalid SDP Time('t=') value '" + value + "'.");
 
             var entity = new SdpTime();
             entity.StartTime = Convert.ToInt64(values[0]);

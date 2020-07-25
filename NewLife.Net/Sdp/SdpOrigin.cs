@@ -44,12 +44,12 @@ namespace NewLife.Net.Sdp
             /* o=<username> <sess-id> <sess-version> <nettype> <addrtype> <unicast-address>
             */
 
-            if (!value.ToLower().StartsWith("o=")) throw new NetException("Invalid SDP Origin('o=') value '" + value + "'.");
+            if (!value.ToLower().StartsWith("o=")) throw new XException("Invalid SDP Origin('o=') value '" + value + "'.");
 
             value = value.Substring(2);
 
             var values = value.Split(' ');
-            if (values.Length != 6) throw new NetException("Invalid SDP Origin('o=') value '" + value + "'.");
+            if (values.Length != 6) throw new XException("Invalid SDP Origin('o=') value '" + value + "'.");
 
             var so = new SdpOrigin();
             so.UserName = values[0];

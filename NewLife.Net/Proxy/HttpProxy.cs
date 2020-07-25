@@ -249,7 +249,7 @@ namespace NewLife.Net.Proxy
                     ruri.Port = 80;
                 }
                 else
-                    throw new NetException("无法处理的请求！{0}", entity);
+                    throw new XException("无法处理的请求！{0}", entity);
 
                 //WriteDebugLog("[{4}] {3} => {0} {1} [{2}]", entity.Method, oriUrl, entity.ContentLength, Session.Remote.EndPoint, ID);
 

@@ -202,7 +202,7 @@ namespace NewLife.Net.Http
                 }
 
                 var p = line.IndexOf(":");
-                if (p < 0) throw new NetException("无法处理的头部名值对！{0}", line);
+                if (p < 0) throw new XException("无法处理的头部名值对！{0}", line);
                 Headers[line.Substring(0, p).Trim()] = line.Substring(p + 1).Trim();
             }
         }

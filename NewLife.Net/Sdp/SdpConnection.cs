@@ -29,12 +29,12 @@ namespace NewLife.Net.Sdp
 
             value = value.Trim();
 
-            if (!value.ToLower().StartsWith("c=")) throw new NetException("Invalid SDP Connection('c=') value '" + value + "'.");
+            if (!value.ToLower().StartsWith("c=")) throw new XException("Invalid SDP Connection('c=') value '" + value + "'.");
 
             value = value.Substring(2);
 
             var values = value.Split(' ');
-            if (values.Length != 3) throw new NetException("Invalid SDP Connection('c=') value '" + value + "'.");
+            if (values.Length != 3) throw new XException("Invalid SDP Connection('c=') value '" + value + "'.");
 
             var entity = new SdpConnection();
             entity.NetType = values[0];

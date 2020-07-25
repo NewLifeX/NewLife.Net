@@ -189,7 +189,7 @@ namespace NewLife.Net.Proxy
         #region 发送
         /// <summary>发送数据</summary>
         /// <param name="pk">缓冲区</param>
-        public virtual Boolean SendRemote(Packet pk)
+        public virtual Int32 SendRemote(Packet pk)
         {
             try
             {
@@ -201,7 +201,7 @@ namespace NewLife.Net.Proxy
         /// <summary>发送数据流</summary>
         /// <param name="stream"></param>
         /// <returns></returns>
-        public virtual Boolean SendRemote(Stream stream)
+        public virtual Int32 SendRemote(Stream stream)
         {
             try
             {
@@ -219,7 +219,7 @@ namespace NewLife.Net.Proxy
         /// <summary>发送字符串</summary>
         /// <param name="msg"></param>
         /// <param name="encoding"></param>
-        public virtual Boolean SendRemote(String msg, Encoding encoding = null)
+        public virtual Int32 SendRemote(String msg, Encoding encoding = null)
         {
             try
             {

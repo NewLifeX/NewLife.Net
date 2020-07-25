@@ -73,7 +73,7 @@ namespace NewLife.Net.SGIP
             catch (Exception ex)
             {
                 var str = IP + ":" + Port.ToString();
-                throw new NetException("连接网关服务器" + str + "出错，请确定网络是否畅通！" + ex.Message, ex);
+                throw new XException("连接网关服务器" + str + "出错，请确定网络是否畅通！" + ex.Message, ex);
             }
 
             var cmd = new SGIPBind();
