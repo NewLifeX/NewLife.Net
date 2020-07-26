@@ -13,15 +13,22 @@ namespace EchoTest
     class MyNetSession : NetSession<MyNetServer>
     {
         /// <summary>客户端连接</summary>
-        public override void Start()
+        protected override void OnConnected()
         {
-            base.Start();
+            // 发送欢迎语
+            Send($"Welcome to visit {Environment.MachineName}!  [{Remote}]\r\n");
 
+            base.OnConnected();
+        }
+
+        /// <summary>客户端断开连接</summary>
+        protected override void OnDisconnected()
+        {
 #if DEBUG
-            // 欢迎语
-            var str = String.Format("Welcome to visit {1}!  [{0}]\r\n", Remote, Environment.MachineName);
-            Send(str);
+            WriteLog("客户端{0}已经断开连接啦", Remote);
 #endif
+
+            base.OnDisconnected();
         }
 
         /// <summary>收到客户端数据</summary>
@@ -34,17 +41,6 @@ namespace EchoTest
 
             // 把收到的数据发回去
             Send(e.Packet);
-        }
-
-        /// <summary>断开</summary>
-        /// <param name="disposing"></param>
-        protected override void Dispose(Boolean disposing)
-        {
-#if DEBUG
-            WriteLog("断开：{0}", Remote);
-#endif
-
-            base.Dispose(disposing);
         }
 
         /// <summary>出错</summary>
