@@ -26,7 +26,7 @@ namespace RpcTest
                 // 取得当前上下文
                 var ctx = ControllerContext.Current;
 
-                throw new ApiException(507, "[{0}]调用次数过多！Times={1}".F(ctx.ActionName, times));
+                throw new ApiException(507, $"[{ctx.ActionName}]调用次数过多！Times={times}");
             }
 
             var user = new User

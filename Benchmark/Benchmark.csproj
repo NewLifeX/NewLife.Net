@@ -24,7 +24,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="NewLife.Core" Version="8.8.2020.725-rc" />
+    <PackageReference Include="NewLife.Core" Version="8.8.2020.729-rc4" />
   </ItemGroup>
 
 </Project>
