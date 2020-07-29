@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
 using NewLife;
 using NewLife.Data;
@@ -43,9 +44,10 @@ namespace Benchmark
         {
             Console.ForegroundColor = ConsoleColor.Yellow;
 
-            Console.WriteLine("压力测试工具：netbench [-c 100] [-n 10000] [-s content] tcp://127.0.0.1:1234");
+            Console.WriteLine("压力测试工具：netbench [-c 100] [-n 10000] [-i 0] [-s content] tcp://127.0.0.1:1234");
             Console.WriteLine("\t-c\t并发数。默认100用户");
             Console.WriteLine("\t-n\t请求数。默认每用户请求10000次");
+            Console.WriteLine("\t-i\t间隔。间隔多少毫秒发一次请求");
             Console.WriteLine("\t-s\t字符串内容。支持0x开头十六进制");
             Console.WriteLine("\t-r\t等待响应。");
 
@@ -68,6 +70,7 @@ namespace Benchmark
             Console.WriteLine("目标：{0}", uri);
             Console.WriteLine("请求：{0:n0}", cfg.Times);
             Console.WriteLine("并发：{0:n0}", cfg.Thread);
+            Console.WriteLine("间隔：{0:n0}", cfg.Interval);
             Console.WriteLine("内容：[{0:n0}] {1}", pk.Count, txt);
             Console.ResetColor();
             Console.WriteLine();
@@ -124,6 +127,8 @@ namespace Benchmark
                     {
                         count++;
                     }
+
+                    if (cfg.Interval > 0) Thread.Sleep(cfg.Interval);
                 }
             }
             catch { }
@@ -137,7 +142,7 @@ namespace Benchmark
             try
             {
                 var client = uri.CreateRemote();
-                (client as SessionBase).MaxAsync = 0;
+                if (!cfg.Reply) (client as SessionBase).MaxAsync = 0;
                 client.Open();
 
                 await Task.Yield();
@@ -155,7 +160,10 @@ namespace Benchmark
                         count++;
                     }
 
-                    await Task.Yield();
+                    if (cfg.Interval > 0)
+                        await Task.Delay(cfg.Interval);
+                    else
+                        await Task.Yield();
                 }
             }
             catch { }

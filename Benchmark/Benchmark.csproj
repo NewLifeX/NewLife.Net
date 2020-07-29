@@ -6,7 +6,7 @@
     <AssemblyName>netbench</AssemblyName>
     <RootNamespace>Benchmark</RootNamespace>
     <Deterministic>false</Deterministic>
-    <AssemblyVersion>1.1.*</AssemblyVersion>
+    <AssemblyVersion>1.2.*</AssemblyVersion>
     <OutputPath>..\Bin\Bench\</OutputPath>
     <AppendTargetFrameworkToOutputPath>false</AppendTargetFrameworkToOutputPath>
   </PropertyGroup>
