@@ -112,7 +112,7 @@ namespace Benchmark
             try
             {
                 var client = uri.CreateRemote();
-                if (!cfg.Reply) (client as SessionBase).MaxAsync = 0;
+                if (cfg.Reply) (client as SessionBase).MaxAsync = 0;
                 client.Open();
                 for (var k = 0; k < cfg.Times; k++)
                 {
@@ -131,7 +131,10 @@ namespace Benchmark
                     if (cfg.Interval > 0) Thread.Sleep(cfg.Interval);
                 }
             }
-            catch { }
+            catch (Exception ex)
+            {
+                XTrace.WriteException(ex);
+            }
 
             return count;
         }
@@ -142,7 +145,7 @@ namespace Benchmark
             try
             {
                 var client = uri.CreateRemote();
-                if (!cfg.Reply) (client as SessionBase).MaxAsync = 0;
+                if (cfg.Reply) (client as SessionBase).MaxAsync = 0;
                 client.Open();
 
                 await Task.Yield();
@@ -166,7 +169,10 @@ namespace Benchmark
                         await Task.Yield();
                 }
             }
-            catch { }
+            catch (Exception ex)
+            {
+                XTrace.WriteException(ex);
+            }
 
             return count;
         }

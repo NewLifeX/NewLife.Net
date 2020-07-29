@@ -42,6 +42,7 @@ namespace EchoTest
                 Port = 1234,
                 Log = XTrace.Log,
                 SessionLog = XTrace.Log,
+                StatPeriod = 30,
                 Tracer = new DefaultTracer { Period = 15, Log = XTrace.Log },
 #if DEBUG
                 SocketLog = XTrace.Log,
@@ -91,7 +92,7 @@ namespace EchoTest
             //else if (state is ISocketRemote ss)
             //    msg = ss.GetStat();
 
-            Console.Title = msg;
+            if (!msg.IsNullOrEmpty()) Console.Title = msg;
         }
     }
 }
