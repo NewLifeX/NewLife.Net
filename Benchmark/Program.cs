@@ -109,7 +109,7 @@ namespace Benchmark
             try
             {
                 var client = uri.CreateRemote();
-                (client as SessionBase).MaxAsync = 0;
+                if (!cfg.Reply) (client as SessionBase).MaxAsync = 0;
                 client.Open();
                 for (var k = 0; k < cfg.Times; k++)
                 {

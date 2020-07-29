@@ -42,6 +42,7 @@ namespace EchoTest
                 Port = 1234,
                 Log = XTrace.Log,
                 SessionLog = XTrace.Log,
+                Tracer = new DefaultTracer { Period = 15, Log = XTrace.Log },
 #if DEBUG
                 SocketLog = XTrace.Log,
                 LogSend = true,
