@@ -33,7 +33,7 @@ namespace Benchmark
             }
             catch (Exception ex)
             {
-                XTrace.WriteException(ex.GetTrue());
+                XTrace.WriteException(ex);
             }
 
             //Console.WriteLine("OK!");
