@@ -1,5 +1,8 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Linq;
+using System.Net;
+using NewLife;
 
 namespace Benchmark
 {
@@ -14,6 +17,9 @@ namespace Benchmark
 
         /// <summary>间隔，毫秒</summary>
         public Int32 Interval { get; set; }
+
+        /// <summary>绑定的本地地址，*表示每一个分开绑定，用于海量连接压测</summary>
+        public String Bind { get; set; }
 
         public String Content { get; set; }
 
@@ -54,6 +60,13 @@ namespace Benchmark
                             i++;
                         }
                         break;
+                    case "-b":
+                        if (i + 1 < args.Length)
+                        {
+                            Bind = args[i + 1];
+                            i++;
+                        }
+                        break;
                     case "-r":
                         Reply = true;
                         break;
@@ -62,6 +75,23 @@ namespace Benchmark
 
             var str = args.LastOrDefault();
             if (!str.StartsWith("-")) Address = str;
+        }
+
+        public IPAddress[] GetBinds()
+        {
+            if (Bind == "*") return NetHelper.GetIPsWithCache();
+
+            var addrs = new List<IPAddress>();
+            if (!Bind.IsNullOrEmpty())
+            {
+                var binds = Bind.Split(",");
+                foreach (var item in binds)
+                {
+                    addrs.Add(IPAddress.Parse(item));
+                }
+            }
+
+            return addrs.ToArray();
         }
     }
 }

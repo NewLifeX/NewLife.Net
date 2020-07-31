@@ -1,0 +1,8 @@
+{
+  "profiles": {
+    "Benchmark": {
+      "commandName": "Project",
+      "commandLineArgs": "-c 1 -n 100 -i 10000 -b * tcp://127.0.0.1:1234"
+    }
+  }
+}

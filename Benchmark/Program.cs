@@ -2,6 +2,8 @@
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
+using System.Net;
+using System.Net.Sockets;
 using System.Threading;
 using System.Threading.Tasks;
 using NewLife;
@@ -48,8 +50,11 @@ namespace Benchmark
             Console.WriteLine("\t-c\t并发数。默认100用户");
             Console.WriteLine("\t-n\t请求数。默认每用户请求10000次");
             Console.WriteLine("\t-i\t间隔。间隔多少毫秒发一次请求");
-            Console.WriteLine("\t-s\t字符串内容。支持0x开头十六进制");
             Console.WriteLine("\t-r\t等待响应。");
+            Console.WriteLine("\t-s\t字符串内容。支持0x开头十六进制");
+
+            Console.WriteLine();
+            Console.WriteLine("本地IP地址：{0}", NetHelper.GetIPsWithCache().Join());
 
             Console.ResetColor();
         }
@@ -70,8 +75,11 @@ namespace Benchmark
             Console.WriteLine("目标：{0}", uri);
             Console.WriteLine("请求：{0:n0}", cfg.Times);
             Console.WriteLine("并发：{0:n0}", cfg.Thread);
-            Console.WriteLine("间隔：{0:n0}", cfg.Interval);
             Console.WriteLine("内容：[{0:n0}] {1}", pk.Count, txt);
+
+            if (cfg.Interval > 0) Console.WriteLine("间隔：{0:n0}", cfg.Interval);
+            if (!cfg.Bind.IsNullOrEmpty()) Console.WriteLine("绑定：{0}", cfg.Bind);
+
             Console.ResetColor();
             Console.WriteLine();
 
@@ -89,10 +97,13 @@ namespace Benchmark
                 }
                 else
                 {
-                    var tsk = Task.Run(async () => await WorkOneAsync(uri, cfg, pk));
+                    var index = i;
+                    var tsk = Task.Run(async () => await WorkOneAsync(index, uri, cfg, pk));
                     ts.Add(tsk);
                 }
             }
+
+            Console.WriteLine("{0:n0} 个并发已就绪", ts.Count);
             var total = Task.WhenAll(ts.ToArray()).Result.Sum();
 
             sw.Stop();
@@ -139,13 +150,44 @@ namespace Benchmark
             return count;
         }
 
-        static async Task<Int32> WorkOneAsync(NetUri uri, Config cfg, Packet pk)
+        static async Task<Int32> WorkOneAsync(Int32 index, NetUri uri, Config cfg, Packet pk)
         {
+            // 如果有绑定本地地址，直接使用；如果绑定*，则轮流使用
+            IPAddress remote = null;
+            if (!cfg.Bind.IsNullOrEmpty())
+            {
+                // 如果监听的是本地地址，则可以使用所有本地IP，但是需要根据类型修改uri
+                if (uri.Address.IsLocal())
+                {
+                    var binds = cfg.GetBinds();
+
+                    if (binds.Length == 1)
+                        remote = binds[0];
+                    else if (binds.Length > 1)
+                        remote = binds[index % binds.Length];
+
+                    // 修改为相同协议栈
+                    var addr = remote.AddressFamily == AddressFamily.InterNetworkV6 ? IPAddress.IPv6Loopback : IPAddress.Loopback;
+                    uri = new NetUri(uri.Type, addr, uri.Port);
+                }
+                else
+                {
+                    var binds = cfg.GetBinds().Where(e => e.AddressFamily == uri.Address.AddressFamily).ToArray();
+
+                    if (binds.Length == 1)
+                        remote = binds[0];
+                    else if (binds.Length > 1)
+                        remote = binds[index % binds.Length];
+                }
+            }
+
             var count = 0;
             try
             {
                 var client = uri.CreateRemote();
                 if (cfg.Reply) (client as SessionBase).MaxAsync = 0;
+                if (remote != null) client.Local.Address = remote;
+
                 client.Open();
 
                 await Task.Yield();
