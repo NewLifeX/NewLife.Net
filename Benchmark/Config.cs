@@ -13,7 +13,8 @@ namespace Benchmark
 
         public Int32 Times { get; set; } = 10000;
 
-        public Int32 Thread { get; set; } = 100;
+        /// <summary>并行度</summary>
+        public Int32 ConcurrentLevel { get; set; } = 100;
 
         /// <summary>间隔，毫秒</summary>
         public Int32 Interval { get; set; }
@@ -42,7 +43,7 @@ namespace Benchmark
                     case "-c":
                         if (i + 1 < args.Length)
                         {
-                            Thread = args[i + 1].ToInt();
+                            ConcurrentLevel = args[i + 1].ToInt();
                             i++;
                         }
                         break;

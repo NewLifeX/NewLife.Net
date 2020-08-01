@@ -54,7 +54,7 @@ namespace Benchmark
             Console.WriteLine("\t-s\t字符串内容。支持0x开头十六进制");
 
             Console.WriteLine();
-            Console.WriteLine("本地IP地址：{0}", NetHelper.GetIPsWithCache().Join());
+            Console.WriteLine("本地IP地址：{0}", NetHelper.GetIPsWithCache().Join("\r\n\t"));
 
             Console.ResetColor();
         }
@@ -68,13 +68,40 @@ namespace Benchmark
             var buf = txt.StartsWith("0x") ? txt.TrimStart("0x").ToHex() : txt.GetBytes();
             var pk = new Packet(buf);
 
+            // 绑定集合
+            var binds = new List<(IPAddress, NetUri)>();
+            if (!cfg.Bind.IsNullOrEmpty())
+            {
+                // 如果监听的是本地地址，则可以使用所有本地IP，但是需要根据类型修改uri
+                if (uri.Address.IsLocal())
+                {
+                    foreach (var item in cfg.GetBinds())
+                    {
+                        // 修改为相同协议栈
+                        var uri2 = new NetUri(uri.Type, item, uri.Port);
+                        binds.Add((item, uri2));
+                    }
+                }
+                else
+                {
+                    foreach (var item in cfg.GetBinds())
+                    {
+                        if (item.AddressFamily == uri.Address.AddressFamily && !IPAddress.IsLoopback(item)) binds.Add((item, uri));
+                    }
+                }
+            }
+            else
+            {
+                binds.Add((null, uri));
+            }
+
             Console.ForegroundColor = ConsoleColor.Red;
             Console.WriteLine("NewLife.Benchmark v{0}", AssemblyX.Entry.Version);
 
             Console.ForegroundColor = ConsoleColor.Yellow;
             Console.WriteLine("目标：{0}", uri);
             Console.WriteLine("请求：{0:n0}", cfg.Times);
-            Console.WriteLine("并发：{0:n0}", cfg.Thread);
+            Console.WriteLine("并发：{0:n0}", cfg.ConcurrentLevel);
             Console.WriteLine("内容：[{0:n0}] {1}", pk.Count, txt);
 
             if (cfg.Interval > 0) Console.WriteLine("间隔：{0:n0}", cfg.Interval);
@@ -87,20 +114,11 @@ namespace Benchmark
 
             // 多线程
             var ts = new List<Task<Int32>>();
-            var maxCPU = Environment.ProcessorCount * 2;
-            for (var i = 0; i < cfg.Thread; i++)
+            for (var i = 0; i < cfg.ConcurrentLevel; i++)
             {
-                if (cfg.Thread <= maxCPU)
-                {
-                    var tsk = Task.Factory.StartNew(() => WorkOne(uri, cfg, pk), TaskCreationOptions.LongRunning);
-                    ts.Add(tsk);
-                }
-                else
-                {
-                    var index = i;
-                    var tsk = Task.Run(async () => await WorkOneAsync(index, uri, cfg, pk));
-                    ts.Add(tsk);
-                }
+                var bind = binds[i % binds.Count];
+                var tsk = Task.Run(async () => await WorkOneAsync(bind.Item1, bind.Item2, cfg, pk));
+                ts.Add(tsk);
             }
 
             Console.WriteLine("{0:n0} 个并发已就绪", ts.Count);
@@ -112,81 +130,17 @@ namespace Benchmark
 
             var ms = sw.Elapsed.TotalMilliseconds;
             Console.WriteLine("速度：{0:n0}tps", total * 1000L / ms);
-
-            //Thread.Sleep(5000);
-            //Console.ReadKey(true);
         }
 
-        static Int32 WorkOne(NetUri uri, Config cfg, Packet pk)
+        static Type _LastError;
+        static async Task<Int32> WorkOneAsync(IPAddress local, NetUri uri, Config cfg, Packet pk)
         {
             var count = 0;
             try
             {
                 var client = uri.CreateRemote();
                 if (cfg.Reply) (client as SessionBase).MaxAsync = 0;
-                client.Open();
-                for (var k = 0; k < cfg.Times; k++)
-                {
-                    client.Send(pk);
-
-                    if (cfg.Reply)
-                    {
-                        var pk2 = client.Receive();
-                        if (pk2.Count > 0) count++;
-                    }
-                    else
-                    {
-                        count++;
-                    }
-
-                    if (cfg.Interval > 0) Thread.Sleep(cfg.Interval);
-                }
-            }
-            catch (Exception ex)
-            {
-                XTrace.WriteException(ex);
-            }
-
-            return count;
-        }
-
-        static async Task<Int32> WorkOneAsync(Int32 index, NetUri uri, Config cfg, Packet pk)
-        {
-            // 如果有绑定本地地址，直接使用；如果绑定*，则轮流使用
-            IPAddress remote = null;
-            if (!cfg.Bind.IsNullOrEmpty())
-            {
-                // 如果监听的是本地地址，则可以使用所有本地IP，但是需要根据类型修改uri
-                if (uri.Address.IsLocal())
-                {
-                    var binds = cfg.GetBinds();
-
-                    if (binds.Length == 1)
-                        remote = binds[0];
-                    else if (binds.Length > 1)
-                        remote = binds[index % binds.Length];
-
-                    // 修改为相同协议栈
-                    var addr = remote.AddressFamily == AddressFamily.InterNetworkV6 ? IPAddress.IPv6Loopback : IPAddress.Loopback;
-                    uri = new NetUri(uri.Type, addr, uri.Port);
-                }
-                else
-                {
-                    var binds = cfg.GetBinds().Where(e => e.AddressFamily == uri.Address.AddressFamily).ToArray();
-
-                    if (binds.Length == 1)
-                        remote = binds[0];
-                    else if (binds.Length > 1)
-                        remote = binds[index % binds.Length];
-                }
-            }
-
-            var count = 0;
-            try
-            {
-                var client = uri.CreateRemote();
-                if (cfg.Reply) (client as SessionBase).MaxAsync = 0;
-                if (remote != null) client.Local.Address = remote;
+                if (local != null) client.Local.Address = local;
 
                 client.Open();
 
@@ -213,7 +167,11 @@ namespace Benchmark
             }
             catch (Exception ex)
             {
-                XTrace.WriteException(ex);
+                if (_LastError == null || _LastError != ex.GetType())
+                {
+                    _LastError = ex.GetType();
+                    XTrace.WriteException(ex);
+                }
             }
 
             return count;
