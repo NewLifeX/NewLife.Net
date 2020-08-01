@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
@@ -7,6 +8,7 @@ using System.Net.Sockets;
 using System.Threading;
 using System.Threading.Tasks;
 using NewLife;
+using NewLife.Collections;
 using NewLife.Data;
 using NewLife.Log;
 using NewLife.Net;
@@ -132,7 +134,7 @@ namespace Benchmark
             Console.WriteLine("速度：{0:n0}tps", total * 1000L / ms);
         }
 
-        static Type _LastError;
+        static ConcurrentHashSet<Type> _LastErrors = new ConcurrentHashSet<Type>();
         static async Task<Int32> WorkOneAsync(IPAddress local, NetUri uri, Config cfg, Packet pk)
         {
             var count = 0;
@@ -167,9 +169,9 @@ namespace Benchmark
             }
             catch (Exception ex)
             {
-                if (_LastError == null || _LastError != ex.GetType())
+                if (_LastErrors.TryAdd(ex.GetType()))
                 {
-                    _LastError = ex.GetType();
+                    XTrace.WriteLine("{0}=>{1}", local, uri);
                     XTrace.WriteException(ex);
                 }
             }
