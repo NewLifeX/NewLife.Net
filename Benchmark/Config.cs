@@ -6,7 +6,7 @@ using NewLife;
 
 namespace Benchmark
 {
-    class Config
+    internal class Config
     {
         #region 属性
         public String Address { get; set; }
@@ -19,7 +19,7 @@ namespace Benchmark
         /// <summary>间隔，毫秒</summary>
         public Int32 Interval { get; set; }
 
-        /// <summary>绑定的本地地址，*表示每一个分开绑定，用于海量连接压测</summary>
+        /// <summary>绑定的本地地址，*表示每一个分开绑定，支持输入一段 10.0.0.31-40，用于海量连接压测</summary>
         public String Bind { get; set; }
 
         public String Content { get; set; }
@@ -85,10 +85,31 @@ namespace Benchmark
             var addrs = new List<IPAddress>();
             if (!Bind.IsNullOrEmpty())
             {
-                var binds = Bind.Split(",");
-                foreach (var item in binds)
+                // 支持输入一段 10.0.0.31-40
+                var p = Bind.IndexOf('-');
+                if (p > 0)
                 {
-                    addrs.Add(IPAddress.Parse(item));
+                    var str = Bind.Substring(0, p);
+                    var p2 = str.LastIndexOfAny(new[] { '.', ':' });
+                    var prefix = str.Substring(0, p2 + 1);
+                    var ipv6 = prefix[^1] == ':';
+                    var start = str.Substring(p2 + 1).ToInt();
+                    var end = Bind.Substring(p + 1).ToInt();
+                    for (var i = start; i <= end; i++)
+                    {
+                        if (ipv6)
+                            addrs.Add(IPAddress.Parse(prefix + i.ToString("x")));
+                        else
+                            addrs.Add(IPAddress.Parse(prefix + i));
+                    }
+                }
+                else
+                {
+                    var binds = Bind.Split(",");
+                    foreach (var item in binds)
+                    {
+                        addrs.Add(IPAddress.Parse(item));
+                    }
                 }
             }
 

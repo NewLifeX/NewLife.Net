@@ -107,7 +107,11 @@ namespace Benchmark
             Console.WriteLine("内容：[{0:n0}] {1}", pk.Count, txt);
 
             if (cfg.Interval > 0) Console.WriteLine("间隔：{0:n0}", cfg.Interval);
-            if (!cfg.Bind.IsNullOrEmpty()) Console.WriteLine("绑定：{0}", cfg.Bind);
+            if (!cfg.Bind.IsNullOrEmpty())
+            {
+                Console.WriteLine("绑定：{0}", cfg.Bind);
+                Console.WriteLine("可用：{0}", binds.Join(",", e => e.Item1));
+            }
 
             Console.ResetColor();
             Console.WriteLine();
@@ -144,6 +148,7 @@ namespace Benchmark
                 if (cfg.Reply) (client as SessionBase).MaxAsync = 0;
                 if (local != null) client.Local.Address = local;
 
+                client.Timeout = 30_000;
                 client.Open();
 
                 await Task.Yield();
