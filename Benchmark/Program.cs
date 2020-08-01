@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using System.Net;
+using System.Threading;
 using System.Threading.Tasks;
 using NewLife;
 using NewLife.Collections;
@@ -134,7 +135,8 @@ namespace Benchmark
                 var tsk = Task.Run(async () => await WorkOneAsync(endPoint, bind.Item2, cfg, pk));
                 ts.Add(tsk);
 
-                //if (i > 0 && i % 1000 == 0) Thread.Sleep(1_000);
+                // 必须控制速度，否则服务端拒绝连接
+                if (i > 0 && i % 100 == 0) Thread.Sleep(100);
             }
 
             Console.WriteLine("{0:n0} 个并发已就绪", ts.Count);
@@ -155,6 +157,8 @@ namespace Benchmark
             var count = 0;
             try
             {
+                Interlocked.Increment(ref _SessionCount);
+
                 var client = uri.CreateRemote();
                 if (cfg.Reply) (client as SessionBase).MaxAsync = 0;
                 if (local != null) client.Local.EndPoint = local;
@@ -196,9 +200,12 @@ namespace Benchmark
                 }
             }
 
+            Interlocked.Decrement(ref _SessionCount);
+
             return count;
         }
 
+        private static Int32 _SessionCount;
         private static ICounter _Counter;
         private static TimerX _Timer;
         private static String _LastStat;
@@ -209,7 +216,7 @@ namespace Benchmark
             if (_LastStat == str) return;
             _LastStat = str;
 
-            XTrace.WriteLine("收发：" + str);
+            XTrace.WriteLine("连接：{0:n0} 收发：{1}", _SessionCount, str);
         }
     }
 }
