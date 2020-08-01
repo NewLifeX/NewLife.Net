@@ -13,6 +13,7 @@ using NewLife.Data;
 using NewLife.Log;
 using NewLife.Net;
 using NewLife.Reflection;
+using NewLife.Threading;
 
 namespace Benchmark
 {
@@ -116,6 +117,8 @@ namespace Benchmark
             Console.ResetColor();
             Console.WriteLine();
 
+            _Counter = new PerfCounter();
+            _Timer = new TimerX(ShowStat, null, 3_000, 5_000) { Async = true };
             var sw = Stopwatch.StartNew();
 
             // 多线程
@@ -154,6 +157,8 @@ namespace Benchmark
                 await Task.Yield();
                 for (var k = 0; k < cfg.Times; k++)
                 {
+                    var ticks = _Counter.StartCount();
+
                     client.Send(pk);
 
                     if (cfg.Reply)
@@ -165,6 +170,8 @@ namespace Benchmark
                     {
                         count++;
                     }
+
+                    _Counter.StopCount(ticks);
 
                     if (cfg.Interval > 0)
                         await Task.Delay(cfg.Interval);
@@ -182,6 +189,18 @@ namespace Benchmark
             }
 
             return count;
+        }
+
+        static ICounter _Counter;
+        static TimerX _Timer;
+        static String _LastStat;
+        static void ShowStat(Object state)
+        {
+            var str = _Counter.ToString();
+            if (_LastStat == str) return;
+            _LastStat = str;
+
+            XTrace.WriteLine("收发：" + str);
         }
     }
 }
