@@ -136,7 +136,7 @@ namespace Benchmark
                 ts.Add(tsk);
 
                 // 必须控制速度，否则服务端拒绝连接
-                if (i > 0 && i % 100 == 0) Thread.Sleep(100);
+                //if (i > 0 && i % 100 == 0) Thread.Sleep(100);
             }
 
             Console.WriteLine("{0:n0} 个并发已就绪", ts.Count);
