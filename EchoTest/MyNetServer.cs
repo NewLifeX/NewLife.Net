@@ -39,6 +39,8 @@ namespace EchoTest
             WriteLog("收到：{0}", e.Packet.ToStr());
 #endif
 
+            //todo 这里是业务处理核心，解开数据包e.Packet并进行业务处理
+
             // 把收到的数据发回去
             Send(e.Packet);
         }
