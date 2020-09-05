@@ -100,9 +100,9 @@ namespace NewLife.Net.IO
 
         /// <summary>销毁会话</summary>
         /// <param name="disposing"></param>
-        protected override void OnDispose(Boolean disposing)
+        protected override void Dispose(Boolean disposing)
         {
-            base.OnDispose(disposing);
+            base.Dispose(disposing);
 
             CloseStream();
 

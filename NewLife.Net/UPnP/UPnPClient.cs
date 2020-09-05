@@ -65,9 +65,9 @@ namespace NewLife.Net.UPnP
         #region 构造
         /// <summary>释放资源</summary>
         /// <param name="disposing"></param>
-        protected override void OnDispose(Boolean disposing)
+        protected override void Dispose(Boolean disposing)
         {
-            base.OnDispose(disposing);
+            base.Dispose(disposing);
 
             try
             {

@@ -16,9 +16,9 @@ namespace NewLife.Net.IO
         #region 构造
         /// <summary>销毁客户端</summary>
         /// <param name="disposing"></param>
-        protected override void OnDispose(Boolean disposing)
+        protected override void Dispose(Boolean disposing)
         {
-            base.OnDispose(disposing);
+            base.Dispose(disposing);
 
             if (Client != null) Client.Dispose();
         }

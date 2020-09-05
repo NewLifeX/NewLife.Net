@@ -36,9 +36,9 @@ namespace NewLife.Net.Stress
         #endregion
 
         #region 构造
-        protected override void OnDispose(Boolean disposing)
+        protected override void Dispose(Boolean disposing)
         {
-            base.OnDispose(disposing);
+            base.Dispose(disposing);
 
             Disconnect();
         }
