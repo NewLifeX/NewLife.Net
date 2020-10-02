@@ -5,8 +5,8 @@
     <Description>网络通讯基础框架及各种协议实现</Description>
     <Company>新生命开发团队</Company>
     <Copyright>版权所有(C) 新生命开发团队 2002~2020</Copyright>
-    <Version>3.6.2020.0802</Version>
-    <FileVersion>3.6.2020.0802</FileVersion>
+    <Version>3.6.2020.1002</Version>
+    <FileVersion>3.6.2020.1002</FileVersion>
     <AssemblyVersion>3.6.*</AssemblyVersion>
     <Deterministic>false</Deterministic>
     <OutputPath>..\Bin</OutputPath>
@@ -94,7 +94,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="NewLife.Core" Version="8.10.2020.901" />
+    <PackageReference Include="NewLife.Core" Version="8.10.2020.1002" />
   </ItemGroup>
 
 </Project>
