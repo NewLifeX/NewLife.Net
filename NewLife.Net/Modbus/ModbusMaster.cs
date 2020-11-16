@@ -41,9 +41,6 @@ namespace NewLife.Net.Modbus
         /// <summary>主机地址。用于485编码</summary>
         public Byte Host { get; set; } = 1;
 
-        /// <summary>启用调试</summary>
-        public Boolean Debug { get; set; }
-
         /// <summary>发送数据后接收数据前的延迟时间，默认0毫秒</summary>
         public Int32 Delay { get; set; }
         #endregion
@@ -73,7 +70,7 @@ namespace NewLife.Net.Modbus
             // 发送
             var buf = entity.ToArray();
 
-            if (Debug) WriteLine(entity.Function + " :" + buf.ToHex());
+            WriteLog("{0} => {1}", entity.Function, buf.ToHex());
 
             // Modbus加锁，防止冲突
             lock (this)
@@ -92,11 +89,12 @@ namespace NewLife.Net.Modbus
                 var pk = Transport.Receive();
                 if (pk == null || pk.Count == 0) return null;
 
-                if (Debug) WriteLine(new String(' ', entity.Function.ToString().Length) + "=>" + pk.ToHex());
+                WriteLog("{0} <= {1}", entity.Function, pk.ToHex());
 
-                var rs = new ModbusEntity().Parse(pk.Data, pk.Offset, pk.Count);
+                var rs = new ModbusEntity();
+                rs = rs.Parse(pk.Data, pk.Offset, pk.Count);
                 if (rs == null) return null;
-                if (rs.IsException) throw new ModbusException(rs.Data != null && rs.Data.Length > 0 ? (Errors)rs.Data[0] : (Errors)0);
+                if (rs.IsException) throw new ModbusException(rs.Data != null && rs.Data.Length > 0 ? (Errors)rs.Data[0] : 0);
 
                 return rs;
             }
@@ -113,7 +111,6 @@ namespace NewLife.Net.Modbus
         /// <returns></returns>
         public Boolean ReadCoil(Int32 addr)
         {
-            //return ReadInputs(MBFunction.ReadCoils, addr, 1)[0];
             // 小心内部可能没有返回
             var rs = ReadInputs(MBFunction.ReadCoils, addr, 1);
             if (rs == null || rs.Length < 1) return false;
@@ -148,8 +145,10 @@ namespace NewLife.Net.Modbus
 
         Boolean[] ReadInputs(MBFunction func, Int32 addr, UInt16 count)
         {
-            var cmd = new ModbusEntity();
-            cmd.Function = func;
+            var cmd = new ModbusEntity
+            {
+                Function = func
+            };
             var buf = new Byte[4];
             buf.WriteUInt16(0, addr);
             buf.WriteUInt16(2, count);
@@ -190,8 +189,10 @@ namespace NewLife.Net.Modbus
         /// <returns></returns>
         public Boolean WriteSingleCoil(Int32 addr, Boolean flag)
         {
-            var cmd = new ModbusEntity();
-            cmd.Function = MBFunction.WriteSingleCoil;
+            var cmd = new ModbusEntity
+            {
+                Function = MBFunction.WriteSingleCoil
+            };
             var buf = new Byte[4];
             buf.WriteUInt16(0, addr);
             if (flag) buf.WriteUInt16(2, 0xFF00);
@@ -213,8 +214,10 @@ namespace NewLife.Net.Modbus
         /// <returns></returns>
         public Boolean WriteMultipleCoils(Int32 addr, params Boolean[] flags)
         {
-            var cmd = new ModbusEntity();
-            cmd.Function = MBFunction.WriteMultipleCoils;
+            var cmd = new ModbusEntity
+            {
+                Function = MBFunction.WriteMultipleCoils
+            };
 
             var n = flags.Length / 8;
             if (flags.Length % 8 != 0) n++;
@@ -288,8 +291,10 @@ namespace NewLife.Net.Modbus
 
         UInt16[] ReadRegisters(MBFunction func, Int32 addr, UInt16 count)
         {
-            var cmd = new ModbusEntity();
-            cmd.Function = func;
+            var cmd = new ModbusEntity
+            {
+                Function = func
+            };
             var buf = new Byte[4];
             buf.WriteUInt16(0, addr);
             buf.WriteUInt16(2, count);
@@ -320,8 +325,10 @@ namespace NewLife.Net.Modbus
         /// <returns></returns>
         public Boolean WriteSingleRegister(Int32 addr, UInt16 val)
         {
-            var cmd = new ModbusEntity();
-            cmd.Function = MBFunction.WriteSingleRegister;
+            var cmd = new ModbusEntity
+            {
+                Function = MBFunction.WriteSingleRegister
+            };
             var buf = new Byte[4];
             buf.WriteUInt16(0, addr);
             buf.WriteUInt16(2, val);
@@ -343,8 +350,10 @@ namespace NewLife.Net.Modbus
         /// <returns></returns>
         public Boolean WriteMultipleRegisters(Int32 addr, params UInt16[] vals)
         {
-            var cmd = new ModbusEntity();
-            cmd.Function = MBFunction.WriteMultipleRegisters;
+            var cmd = new ModbusEntity
+            {
+                Function = MBFunction.WriteMultipleRegisters
+            };
 
             var buf = new Byte[4 + 1 + vals.Length * 2];
             buf.WriteUInt16(0, addr);
@@ -376,8 +385,10 @@ namespace NewLife.Net.Modbus
         /// <returns></returns>
         public Boolean Diagnostics()
         {
-            var cmd = new ModbusEntity();
-            cmd.Function = MBFunction.Diagnostics;
+            var cmd = new ModbusEntity
+            {
+                Function = MBFunction.Diagnostics
+            };
 
             // 子功能码
             var buf = new Byte[2];
@@ -395,8 +406,10 @@ namespace NewLife.Net.Modbus
         /// <returns></returns>
         public Byte[] ReportIdentity()
         {
-            var cmd = new ModbusEntity();
-            cmd.Function = MBFunction.ReportIdentity;
+            var cmd = new ModbusEntity
+            {
+                Function = MBFunction.ReportIdentity
+            };
 
             var rs = Process(cmd, 1 + 8);
             if (rs == null) return null;
@@ -411,10 +424,13 @@ namespace NewLife.Net.Modbus
         #endregion
 
         #region 日志
-        void WriteLine(String msg)
-        {
-            if (Debug) XTrace.WriteLine(msg);
-        }
+        /// <summary>日志</summary>
+        public ILog Log { get; set; }
+
+        /// <summary>写日志</summary>
+        /// <param name="format"></param>
+        /// <param name="args"></param>
+        public void WriteLog(String format, params Object[] args) => Log?.Info(format, args);
         #endregion
     }
 }

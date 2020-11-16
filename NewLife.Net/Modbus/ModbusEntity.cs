@@ -27,25 +27,20 @@ namespace NewLife.Net.Modbus
         /// <summary>不包含数据部分的固定长度。地址、功能码、校验码</summary>
         public const Int32 NO_DATA_LENGTH = 1 + HEAD_OFFSET + 2;
 
-        private Byte _Host = 1;
         /// <summary>主机地址。用于485编码</summary>
-        public Byte Host { get { return _Host; } set { _Host = value; } }
+        public Byte Host { get; set; } = 1;
 
-        private MBFunction _Function;
         /// <summary>功能码</summary>
-        public MBFunction Function { get { return _Function; } set { _Function = value; } }
+        public MBFunction Function { get; set; }
 
-        private Boolean _IsException;
         /// <summary>是否异常</summary>
-        public Boolean IsException { get { return _IsException; } set { _IsException = value; } }
+        public Boolean IsException { get; set; }
 
-        private Byte[] _Data;
         /// <summary>数据</summary>
-        public Byte[] Data { get { return _Data; } set { _Data = value; } }
+        public Byte[] Data { get; set; }
 
-        private UInt16 _Crc;
         /// <summary>校验数据</summary>
-        public UInt16 Crc { get { return _Crc; } set { _Crc = value; } }
+        public UInt16 Crc { get; set; }
         #endregion
 
         //#region 扩展属性
@@ -131,10 +126,7 @@ namespace NewLife.Net.Modbus
         #region 辅助
         /// <summary>已重载。</summary>
         /// <returns></returns>
-        public override String ToString()
-        {
-            return Function.ToString();
-        }
+        public override String ToString() => Function.ToString();
         #endregion
     }
 }

@@ -16,6 +16,7 @@
 
 using System;
 using NewLife.Data;
+using NewLife.Log;
 
 namespace NewLife.Net.Modbus
 {
@@ -27,47 +28,24 @@ namespace NewLife.Net.Modbus
     /// slave.Listen();
     /// </code>
     /// </example>
-    public class ModbusSlave : IDisposable
+    public class ModbusSlave : DisposeBase
     {
         #region 属性
-        private Byte _Host;
         /// <summary>主站ID</summary>
-        public Byte Host { get { return _Host; } set { _Host = value; } }
+        public Byte Host { get; set; }
 
         private IDataStore _DataStore;
         /// <summary>数据存储</summary>
-        public IDataStore DataStore { get { return _DataStore ?? (_DataStore = new DataStore()); } set { _DataStore = value; } }
+        public IDataStore DataStore { get { return _DataStore ??= new DataStore(); } set { _DataStore = value; } }
 
-        private ITransport[] _Transports = new ITransport[4];
         /// <summary>传输口</summary>
-        public ITransport[] Transports { get { return _Transports; } /*set { _Transport = value; }*/ }
-
-        private Boolean _EnableDebug;
-        /// <summary>启用调试</summary>
-        public Boolean EnableDebug { get { return _EnableDebug; } set { _EnableDebug = value; } }
-
-        //private Boolean inited;
+        public ITransport[] Transports { get; } = new ITransport[4];
         #endregion
 
         #region 构造
-        /// <summary>析构</summary>
-        ~ModbusSlave() { Dispose(false); }
-
-        /// <summary>销毁</summary>
-        public void Dispose() { Dispose(true); }
-
         /// <summary>销毁</summary>
         /// <param name="disposing"></param>
-        protected virtual void Dispose(Boolean disposing)
-        {
-            if (disposing) GC.SuppressFinalize(this);
-
-            //if (Transport != null) Transport.Dispose();
-            for (var i = 0; i < Transports.Length; i++)
-            {
-                if (Transports[i] != null) Transports[i].Dispose();
-            }
-        }
+        protected override void Dispose(Boolean disposing) => Transports.TryDispose();
         #endregion
 
         #region Modbus功能
@@ -89,14 +67,10 @@ namespace NewLife.Net.Modbus
 
             var name = transport.ToString();
 
-#if !MF
             transport.Received += (s, e) => { e.Packet = Process(e.Packet); };
-#else
-            transport.Received += (ts, data) => { return Process(data); };
-#endif
             transport.Open();
 
-            WriteLine(GetType().Name + "在" + name + "上监听Host=" + Host);
+            WriteLog("{0}在{1}上监听Host={2}", GetType().Name, name, Host);
 
             return this;
         }
@@ -106,15 +80,6 @@ namespace NewLife.Net.Modbus
         /// <returns></returns>
         public virtual Packet Process(Packet pk)
         {
-#if DEBUG
-            var str = "Request :";
-            for (var i = 0; i < pk.Count; i++)
-            {
-                str += " " + pk[i].ToString("X2");
-            }
-            WriteLine(str);
-#endif
-
             // 处理
             var entity = new ModbusEntity().Parse(pk.ReadBytes());
             // 检查主机
@@ -126,16 +91,6 @@ namespace NewLife.Net.Modbus
             else
                 entity = Process(entity);
             pk = entity.ToArray();
-
-#if DEBUG
-            str = "Response:";
-            for (var i = 0; i < pk.Count; i++)
-            {
-                str += " " + pk[i].ToString("X2");
-            }
-            WriteLine(str);
-            WriteLine("");
-#endif
             return pk;
         }
 
@@ -185,12 +140,7 @@ namespace NewLife.Net.Modbus
             }
             catch (Exception ex)
             {
-                //WriteLine(ex.Message);
-#if MF
-                Microsoft.SPOT.Debug.Print(ex.Message);
-#else
-                NewLife.Log.XTrace.WriteLine(ex.ToString());
-#endif
+                WriteLog(ex.ToString());
 
                 // 执行错误
                 return entity.SetError(Errors.ProcessError);
@@ -223,22 +173,13 @@ namespace NewLife.Net.Modbus
             if (count == 0 || count > 0x07D0) return entity.SetError(Errors.Count);
 
             IBitStore store = null;
-#if DEBUG
-            var func = "";
-#endif
             switch (entity.Function)
             {
                 case MBFunction.ReadCoils:
                     store = DataStore.Coils;
-#if DEBUG
-                    func = "ReadCoils";
-#endif
                     break;
                 case MBFunction.ReadInputs:
                     store = DataStore.Inputs;
-#if DEBUG
-                    func = "ReadInputs";
-#endif
                     break;
                 default:
                     break;
@@ -246,9 +187,6 @@ namespace NewLife.Net.Modbus
 
             // 起始地址+数量 不正确
             if (addr + count >= store.Count) return entity.SetError(Errors.Address);
-#if DEBUG
-            WriteLine(func + "(0x" + addr.ToString("X2") + ", 0x" + count.ToString("X2") + ")");
-#endif
             if (OnReadCoil != null) OnReadCoil(entity, addr, count);
 
             // 返回的时候，用字节存储每一个线圈的状态
@@ -301,12 +239,6 @@ namespace NewLife.Net.Modbus
 
             var flag = val != 0;
 
-#if DEBUG
-            WriteLine("WriteSingleCoil(0x" + addr.ToString("X2") + ", " + flag + ")");
-#endif
-
-            //store.Write(addr, flag);
-
             var count = 0;
             // 支持一下连续写入
             for (var i = 2; i + 1 < data.Length; i += 2, count++)
@@ -352,10 +284,6 @@ namespace NewLife.Net.Modbus
             var store = DataStore.Coils;
             // 起始地址+输出数量
             if (addr + size >= store.Count) return entity.SetError(Errors.Address);
-
-#if DEBUG
-            WriteLine("WriteMultipleCoils(0x" + addr.ToString("X2") + ", 0x" + size.ToString("X2") + ")");
-#endif
 
             // 元素存放于m字节n位
             Int32 m = 0, n = 0;
@@ -414,22 +342,13 @@ namespace NewLife.Net.Modbus
             if (count == 0) return entity.SetError(Errors.Count);
 
             IWordStore store = null;
-#if DEBUG
-            var func = "";
-#endif
             switch (entity.Function)
             {
                 case MBFunction.ReadHoldingRegisters:
                     store = DataStore.HoldingRegisters;
-#if DEBUG
-                    func = "ReadHoldingRegisters";
-#endif
                     break;
                 case MBFunction.ReadInputRegisters:
                     store = DataStore.InputRegisters;
-#if DEBUG
-                    func = "ReadInputRegisters";
-#endif
                     break;
                 default:
                     break;
@@ -437,10 +356,6 @@ namespace NewLife.Net.Modbus
             if (count > store.Count) return entity.SetError(Errors.Count);
             // 起始地址+数量 不正确
             if (addr + count > 0xFFFF) return entity.SetError(Errors.Address);
-
-#if DEBUG
-            WriteLine(func + "(0x" + addr.ToString("X2") + ", 0x" + count.ToString("X2") + ")");
-#endif
             if (OnReadRegister != null) OnReadRegister(entity, addr, count);
 
             var buf = new Byte[1 + count * 2];
@@ -479,10 +394,6 @@ namespace NewLife.Net.Modbus
             // 寄存器地址
             if (addr >= store.Count) return entity.SetError(Errors.Address);
 
-#if DEBUG
-            WriteLine("WriteSingleRegister(0x" + addr.ToString("X2") + ", 0x" + val.ToString("X2") + ")");
-#endif
-
             //store.Write(addr, val);
             var count = 0;
             // 支持多字连续写入
@@ -520,10 +431,6 @@ namespace NewLife.Net.Modbus
             // 起始地址+输出数量
             if (addr + size >= store.Count) return entity.SetError(Errors.Address);
 
-#if DEBUG
-            WriteLine("WriteMultipleRegisters(0x" + addr.ToString("X2") + ", 0x" + size.ToString("X2") + ")");
-#endif
-
             for (var i = 0; i < size; i++)
             {
                 store.Write(addr + i, data.ReadUInt16(5 + i * 2));
@@ -559,9 +466,6 @@ namespace NewLife.Net.Modbus
             if (data == null || data.Length < 2) return entity.SetError(Errors.MessageLength);
 
             var sub = data.ReadUInt16(0);
-#if DEBUG
-            WriteLine("Diagnostics(0x" + sub.ToString("X2") + ")");
-#endif
 
             // 默认原样返回，暂时没有什么有用的子功能码需要处理
             return entity;
@@ -580,10 +484,6 @@ namespace NewLife.Net.Modbus
             // 无效功能指令。
             if (data != null && data.Length > 0) return entity.SetError(Errors.MessageLength);
 
-#if DEBUG
-            WriteLine("ReportIdentity()");
-#endif
-
             var hid = new Byte[] { 0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07, 0x08, };
 
             var buf = new Byte[1 + hid.Length];
@@ -596,14 +496,13 @@ namespace NewLife.Net.Modbus
         #endregion
 
         #region 日志
-        void WriteLine(String msg)
-        {
-#if MF
-            if (EnableDebug) Microsoft.SPOT.Debug.Print(msg);
-#else
-            if (EnableDebug) NewLife.Log.XTrace.WriteLine(msg);
-#endif
-        }
+        /// <summary>日志</summary>
+        public ILog Log { get; set; }
+
+        /// <summary>写日志</summary>
+        /// <param name="format"></param>
+        /// <param name="args"></param>
+        public void WriteLog(String format, params Object[] args) => Log?.Info(format, args);
         #endregion
     }
 
@@ -612,14 +511,4 @@ namespace NewLife.Net.Modbus
     /// <param name="index"></param>
     /// <param name="count"></param>
     public delegate void ModbusHandler(ModbusEntity entity, Int32 index, Int32 count);
-
-    ///// <summary>写线圈委托</summary>
-    ///// <param name="i"></param>
-    ///// <param name="value"></param>
-    //public delegate void WriteCoilHandler(Int32 i, Int32 count);
-
-    ///// <summary>写寄存器委托</summary>
-    ///// <param name="i"></param>
-    ///// <param name="value"></param>
-    //public delegate void WriteRegisterHandler(Int32 i, Int32 count);
 }

@@ -79,10 +79,7 @@ namespace NewLife.Net.Modbus
         /// <param name="store"></param>
         /// <param name="i"></param>
         /// <returns></returns>
-        public static UInt32 ReadUInt32(this IWordStore store, Int32 i)
-        {
-            return (UInt32)((store.Read(i) << 16) + store.Read(i + 1));
-        }
+        public static UInt32 ReadUInt32(this IWordStore store, Int32 i) => (UInt32)((store.Read(i) << 16) + store.Read(i + 1));
 
         /// <summary>写入整个UInt32</summary>
         /// <param name="store"></param>
