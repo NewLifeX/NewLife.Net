@@ -1,22 +1,38 @@
-﻿经过十多年实战经验积累以及多方共同讨论，[新生命团队](https://github.com/newlifex)制订了一种简单而又具有较好扩展性的`RPC（Remote Procedure Call）`协议。  
+﻿## 网络库历史  
+X组件网络库一共经历了数代：  
+1，2005年，APM模型，反向代理、点卡服务端  
+2，2010年，SAEA模型，P2SP网络，单机7万连接  
+3，2014年，物联网云平台，ApiServer单机84.5万连接  
+4，2018年，高速RPC，ApiServer单机16万tps，NetServer单机2266万tps  
+5，2020年，物联网，单机400万长连接  
+
+## 说明文档  
+[NewLife.Net——开始网络编程](https://www.yuque.com/smartstone/blood/net_server)  
+[NewLife.Net——构建可靠的网络服务](https://www.yuque.com/smartstone/blood/net_agent)  
+[NewLife.Net——网络压测单机2266万tps](https://www.yuque.com/smartstone/blood/net_benchmark)  
+[NewLife.Net——管道处理器解决粘包](https://www.yuque.com/smartstone/blood/net_handler)  
+[NewLife.Net——RPC框架NewLife.ApiServer](https://www.yuque.com/smartstone/blood/apiserver)  
+[NewLife.Net——单机400万长连接压力测试](https://www.yuque.com/smartstone/blood/net_100w)  
+
+## SRMP协议封包  
+经过十多年实战经验积累以及多方共同讨论，[新生命团队](https://github.com/newlifex)制订了一种简单而又具有较好扩展性的`RPC（Remote Procedure Call）`协议。  
 全称：`简易远程消息交换协议`，简称： `SRMP（Simple Remote Messaging Protocol）`  
 
-### SRMP目标场景  
 SRMP主要定位于以下场景：  
 1, 内网高速通信，大吞吐量（>100万tps）、低延迟（<1ms）  
 2, 外网远程通信，稳定可靠，海量连接（>10万）  
 3, 物联网硬件设备，容易简单实现协议  
 
 ### 通信协议  
-基于新生命团队标准网络封包协议  
 标准网络封包协议：`1 Flag + 1 Sequence + 2 Length + N Payload`  
 1个字节标识位，标识请求、响应、错误、加密、压缩等；  
 1个字节序列号，用于请求响应包配对；  
 2个字节数据长度N，小端字节序，指示后续负载数据长度（不包含头部4个字节），解决粘包问题；  
 N个字节负载数据，数据内容完全由业务决定，最大长度65534=64k-2。  
+扩展长度，Length为0xFFFF时，封包协议扩展4字节作为新长度，包头共8字节。
 
 ### 指令格式  
-默认采用Json序列化，utf-8编码  
+包头后的负载数据存放指令，默认采用Json序列化，utf-8编码  
 
 请求：S服务名 + N请求参数
 响应：S服务名 + 4响应码 + N响应数据
@@ -25,20 +41,6 @@ N个字节负载数据，数据内容完全由业务决定，最大长度65534=6
 请求，00012500 + 05 + Login + 1E + {user:"Stone",pass:"password"}  
 响应，80011D00 + 05 + Login + 00000000 + 12 + {data:"大石头"}  
 头部4字节，第一个字节最高位区分请求响应，第二个字节序列化，第三第四字节是长度，小字节序  
-
-## 网络库测试用例  
-X组件网络库一共经历了4代：  
-1，2005年，APM模型，反向代理、点卡服务端  
-2，2010年，SAEA模型，P2SP网络，单机7万连接  
-3，2014年，物联网云平台，ApiServer单机84.5万连接  
-4，2018年，高速RPC，ApiServer单机16万tps  
-
-## 说明文档  
-[NewLife.Net——开始网络编程](https://www.cnblogs.com/nnhy/p/newlife_net_echo.html)  
-[NewLife.Net——构建可靠的网络服务](https://www.cnblogs.com/nnhy/p/newlife_net_agent.html)  
-[NewLife.Net——网络压测单机2266万tps](https://www.cnblogs.com/nnhy/p/newlife_net_benchmark.html)  
-[NewLife.Net——管道处理器解决粘包](https://www.cnblogs.com/nnhy/p/newlife_net_handler.html)  
-[NetCore版RPC框架NewLife.ApiServer](https://www.cnblogs.com/nnhy/p/newlife_apiserver.html)  
 
 ## 压力测试  
 NewLife.Net压力测试，峰值4.2Gbps，50万pps，消息大小24字节，消息处理速度2266万tps！  
@@ -80,8 +82,9 @@ NewLife.Net压力测试，峰值4.2Gbps，50万pps，消息大小24字节，消�
 |       [X组件 .NET2.0](https://github.com/NewLifeX/X_NET20)       | 2002  | 存档中 |  .NET2.0  | 日志、网络、RPC、序列化、缓存、Windows服务、多线程  |
 
 #### 新生命开发团队
-`新生命团队始于2002年，部分开源项目具有15年以上漫长历史，源码库保留有2010年以来所有修改记录`  
-网站：http://www.NewLifeX.com  
+`新生命团队始于2002年，部分开源项目具有19年以上漫长历史，源码库保留有2010年以来所有修改记录`  
+网站：https://www.newlifex.com/  
+文档：https://www.yuque.com/smartstone/nx  
 国外：https://github.com/NewLifeX  
 博客：https://nnhy.cnblogs.com  
 QQ群：1600800/1600838  
