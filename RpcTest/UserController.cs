@@ -13,7 +13,7 @@ namespace RpcTest
         public IApiSession Session { get; set; }
 
         [Api(nameof(FindByID))]
-        public User FindByID(Int32 uid, Boolean deleted)
+        public User FindByID(Int32 uid, Boolean enable)
         {
             // Session 用法同Web
             var times = Session["Times"].ToInt();
@@ -33,7 +33,7 @@ namespace RpcTest
             {
                 ID = uid,
                 Name = Rand.NextString(8),
-                Enable = deleted,
+                Enable = enable,
                 CreateTime = DateTime.Now,
             };
 
