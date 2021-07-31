@@ -281,7 +281,7 @@ namespace NewLife.Net.Stun
             writer.Write(this);
 
             // 把特性数据写入
-            stream.Write(ms.ToArray());
+            stream.Write(ms.ReadBytes());
         }
 
         /// <summary>获取消息的数据流</summary>

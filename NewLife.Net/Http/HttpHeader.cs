@@ -2,8 +2,6 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Text;
-using NewLife.IO;
-using NewLife.Serialization;
 
 namespace NewLife.Net.Http
 {
@@ -126,16 +124,26 @@ namespace NewLife.Net.Http
             // 如果不是Http头部，指针要回到原来位置
             var p = stream.Position;
 
-            var idx = stream.IndexOf("\r\n".GetBytes());
-            stream.Position = p;
+            var reader = new StreamReader(stream);
+            //var idx = stream.IndexOf("\r\n".GetBytes());
+            //stream.Position = p;
 
-            if (idx < 0) return null;
+            //if (idx < 0) return null;
 
-            var line = stream.ReadBytes(idx + 2).ToStr().Trim();
-            if (line.IsNullOrWhiteSpace()) { stream.Position = p; return null; }
+            //var line = stream.ReadBytes(idx + 2).ToStr().Trim();
+            var line = reader.ReadLine();
+            if (line.IsNullOrWhiteSpace())
+            {
+                stream.Position = p;
+                return null;
+            }
 
             var ss = line.Split(new Char[] { ' ' }, 3);
-            if (ss == null || ss.Length < 3 || ss[0].IsNullOrWhiteSpace() || ss[0].Length > 10) { stream.Position = p; return null; }
+            if (ss == null || ss.Length < 3 || ss[0].IsNullOrWhiteSpace() || ss[0].Length > 10)
+            {
+                stream.Position = p;
+                return null;
+            }
 
             var entity = new HttpHeader();
             if (ss[0].StartsWithIgnoreCase("HTTP/"))
@@ -166,19 +174,19 @@ namespace NewLife.Net.Http
         /// <param name="stream"></param>
         public void ReadHeaders(Stream stream)
         {
-            //var reader = new StreamReaderX(stream, null, false);
+            var reader = new StreamReader(stream);
 
             IsFinish = true;
             while (true)
             {
-                //var line = reader.ReadLine();
-                var old = stream.Position;
-                var idx = stream.IndexOf(_NewLine);
-                if (idx <= 0) return;
+                var line = reader.ReadLine();
+                //var old = stream.Position;
+                //var idx = stream.IndexOf(_NewLine);
+                //if (idx <= 0) return;
 
-                //stream.Position = old;
-                stream.Seek(-idx - _NewLine.Length, SeekOrigin.Current);
-                var line = stream.ReadBytes(idx + _NewLine.Length).ToStr();
+                ////stream.Position = old;
+                //stream.Seek(-idx - _NewLine.Length, SeekOrigin.Current);
+                //var line = stream.ReadBytes(idx + _NewLine.Length).ToStr();
                 // 找到Empty，也就是找到了换行符，Http头结束
                 if (line == String.Empty) return;
                 if (line == null)

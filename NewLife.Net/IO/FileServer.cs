@@ -24,21 +24,21 @@ namespace NewLife.Net.IO
             Name = "文件服务";
         }
 
-        /// <summary>附加服务器</summary>
-        /// <param name="server"></param>
-        /// <returns></returns>
-        public override Boolean AttachServer(ISocketServer server)
-        {
-            // 接收文件需要顺序
-            if (server is TcpServer)
-            {
-                var tcp = server as TcpServer;
-                tcp.ProcessAsync = false;
-                // 连续传输文件，间隔不得超过5秒
-                //tcp.SessionTimeout = 5;
-            }
-            return base.AttachServer(server);
-        }
+        ///// <summary>附加服务器</summary>
+        ///// <param name="server"></param>
+        ///// <returns></returns>
+        //public override Boolean AttachServer(ISocketServer server)
+        //{
+        //    // 接收文件需要顺序
+        //    if (server is TcpServer)
+        //    {
+        //        var tcp = server as TcpServer;
+        //        tcp.ProcessAsync = false;
+        //        // 连续传输文件，间隔不得超过5秒
+        //        //tcp.SessionTimeout = 5;
+        //    }
+        //    return base.AttachServer(server);
+        //}
         #endregion
 
         #region 事件
@@ -156,7 +156,7 @@ namespace NewLife.Net.IO
                 }
                 Inf = fi;
                 Length = 0;
-                if (StartTime == DateTime.MinValue) StartTime = Session.StartTime;
+                if (StartTime == DateTime.MinValue) StartTime = DateTime.Now;
 
                 // 加大网络缓冲区
                 Session.Client.ReceiveBufferSize = 8 * 1024 * 1024;
@@ -175,7 +175,7 @@ namespace NewLife.Net.IO
                 var ms = (DateTime.Now - StartTime).TotalMilliseconds;
                 var speed = Length / 1024 / ms * 1000;
                 WriteLog("收到{0:n0}字节，{1:n0}kb/s，完成{2:p}", len, (Int32)speed, (Double)Length / Inf.Length);
-                if (Stream != null && Stream.CanWrite) Stream.Write(stream);
+                if (Stream != null && Stream.CanWrite) stream.CopyTo(Stream);
                 //}
                 //else
                 //{
