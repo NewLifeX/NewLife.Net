@@ -53,6 +53,7 @@ namespace Benchmark
             Console.WriteLine("\t-i\t间隔。间隔多少毫秒发一次请求");
             Console.WriteLine("\t-r\t等待响应。");
             Console.WriteLine("\t-s\t字符串内容。支持0x开头十六进制");
+            Console.WriteLine("\t-b\t绑定的本地地址，*表示每一个分开绑定，支持输入一段 10.0.0.31-40。");
 
             Console.WriteLine();
             Console.WriteLine("本地IP地址：{0}", NetHelper.GetIPsWithCache().Join("\r\n\t"));

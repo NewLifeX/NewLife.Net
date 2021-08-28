@@ -2,7 +2,7 @@
 
   <PropertyGroup>
     <OutputType>Exe</OutputType>
-    <TargetFramework>netcoreapp3.1</TargetFramework>
+    <TargetFramework>net5.0</TargetFramework>
     <AssemblyName>netbench</AssemblyName>
     <RootNamespace>Benchmark</RootNamespace>
     <Deterministic>false</Deterministic>
@@ -24,7 +24,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="NewLife.Core" Version="8.10.2021.723-beta1" />
+    <PackageReference Include="NewLife.Core" Version="8.11.2021.826-beta2" />
   </ItemGroup>
 
 </Project>
