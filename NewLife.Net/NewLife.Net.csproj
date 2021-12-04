@@ -4,9 +4,9 @@
     <AssemblyTitle>新生命网络库</AssemblyTitle>
     <Description>网络通讯基础框架及各种协议实现</Description>
     <Company>新生命开发团队</Company>
-    <Copyright>版权所有(C) 新生命开发团队 2002~2020</Copyright>
-    <Version>3.6.2020.1116</Version>
-    <FileVersion>3.6.2020.1116</FileVersion>
+    <Copyright>版权所有(C) 新生命开发团队 2002~2021</Copyright>
+    <Version>3.6.2021.1204</Version>
+    <FileVersion>3.6.2021.1204</FileVersion>
     <AssemblyVersion>3.6.*</AssemblyVersion>
     <Deterministic>false</Deterministic>
     <OutputPath>..\Bin</OutputPath>
@@ -30,7 +30,7 @@
     <SymbolPackageFormat>snupkg</SymbolPackageFormat>
   </PropertyGroup>
   <ItemGroup>
-    <PackageReference Include="Microsoft.SourceLink.GitHub" Version="1.1.0-beta-20204-02">
+    <PackageReference Include="Microsoft.SourceLink.GitHub" Version="1.1.1">
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
@@ -101,7 +101,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="NewLife.Core" Version="8.11.2021.826-beta2" />
+    <PackageReference Include="NewLife.Core" Version="8.11.2021.1204" />
   </ItemGroup>
 
 </Project>
