@@ -92,7 +92,7 @@ namespace NewLife.Net.Stress
         }
 
         static TimerX timerShowStatus;
-        static Stopwatch sw;
+        static Stopwatch sw = Stopwatch.StartNew();
 
         static void ShowStatus(Object state)
         {

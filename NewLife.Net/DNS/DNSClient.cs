@@ -130,10 +130,7 @@ namespace NewLife.Net.DNS
         #region 辅助
         /// <summary>已重载。</summary>
         /// <returns></returns>
-        public override String ToString()
-        {
-            return "{0} {1:n0}/{2:n0}={3:p0}".F(Server, Success, Total, Percent);
-        }
+        public override String ToString() => $"{Server} {Success:n0}/{Total:n0}={Percent:p0}";
         #endregion
 
         #region 静态

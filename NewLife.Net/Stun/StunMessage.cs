@@ -1,12 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Net;
 using System.Text;
-using NewLife.Reflection;
-using NewLife.Serialization;
-using System.Linq;
 using NewLife.Security;
+using NewLife.Serialization;
 
 namespace NewLife.Net.Stun
 {
@@ -38,11 +37,11 @@ namespace NewLife.Net.Stun
 
         private StunMessageType _Type;
         /// <summary>消息类型</summary>
-        public StunMessageType Type { get { return _Type; } set { _Type = value; } }
+        public StunMessageType Type { get => _Type; set => _Type = value; }
 
         private UInt16 _Length;
         /// <summary>消息长度</summary>
-        public UInt16 Length { get { return _Length; } set { _Length = value; } }
+        public UInt16 Length { get => _Length; set => _Length = value; }
 
         //private Int32 _MagicCookie = 0x2112A442;
         ///// <summary>幻数。0x2112A442</summary>
@@ -51,7 +50,7 @@ namespace NewLife.Net.Stun
         [FieldSize(16)]
         private Byte[] _TransactionID;
         /// <summary>会话编号</summary>
-        public Byte[] TransactionID { get { return _TransactionID; } set { _TransactionID = value; } }
+        public Byte[] TransactionID { get => _TransactionID; set => _TransactionID = value; }
         #endregion
 
         #region 特性集合
@@ -63,9 +62,9 @@ namespace NewLife.Net.Stun
         [NonSerialized]
         private Dictionary<AttributeType, StunAttribute> _Atts;
         /// <summary>属性集合</summary>
-        private Dictionary<AttributeType, StunAttribute> Atts { get { return _Atts ?? (_Atts = new Dictionary<AttributeType, StunAttribute>()); } }
+        private Dictionary<AttributeType, StunAttribute> Atts => _Atts ?? (_Atts = new Dictionary<AttributeType, StunAttribute>());
 
-        StunAttribute GetAtt(AttributeType type, Boolean create = false)
+        private StunAttribute GetAtt(AttributeType type, Boolean create = false)
         {
             if (Atts.TryGetValue(type, out var att)) return att;
 
@@ -73,14 +72,16 @@ namespace NewLife.Net.Stun
 
             lock (Atts)
             {
-                att = new StunAttribute();
-                att.Type = type;
+                att = new StunAttribute
+                {
+                    Type = type
+                };
                 Atts.Add(type, att);
                 return att;
             }
         }
 
-        T GetAtt<T>(AttributeType type, Int32 position = 0)
+        private T GetAtt<T>(AttributeType type, Int32 position = 0)
         {
             var att = GetAtt(type, false);
             if (att == null) return default(T);
@@ -108,7 +109,7 @@ namespace NewLife.Net.Stun
             }
         }
 
-        void SetAtt<T>(AttributeType type, T value, Int32 position = 0)
+        private void SetAtt<T>(AttributeType type, T value, Int32 position = 0)
         {
             var att = GetAtt(type, true);
 
@@ -168,40 +169,40 @@ namespace NewLife.Net.Stun
 
         #region 扩展属性
         /// <summary>映射地址</summary>
-        public IPEndPoint MappedAddress { get { return GetAtt<IPEndPoint>(AttributeType.MappedAddress); } set { SetAtt<IPEndPoint>(AttributeType.MappedAddress, value); } }
+        public IPEndPoint MappedAddress { get => GetAtt<IPEndPoint>(AttributeType.MappedAddress); set => SetAtt<IPEndPoint>(AttributeType.MappedAddress, value); }
 
         /// <summary>响应地址</summary>
-        public IPEndPoint ResponseAddress { get { return GetAtt<IPEndPoint>(AttributeType.ResponseAddress); } set { SetAtt<IPEndPoint>(AttributeType.ResponseAddress, value); } }
+        public IPEndPoint ResponseAddress { get => GetAtt<IPEndPoint>(AttributeType.ResponseAddress); set => SetAtt<IPEndPoint>(AttributeType.ResponseAddress, value); }
 
         /// <summary>请求改变</summary>
-        public Boolean ChangeIP { get { return GetAtt<Boolean>(AttributeType.ChangeRequest, 0); } set { SetAtt<Boolean>(AttributeType.ChangeRequest, value, 0); } }
+        public Boolean ChangeIP { get => GetAtt<Boolean>(AttributeType.ChangeRequest, 0); set => SetAtt<Boolean>(AttributeType.ChangeRequest, value, 0); }
 
         /// <summary>请求改变</summary>
-        public Boolean ChangePort { get { return GetAtt<Boolean>(AttributeType.ChangeRequest, 1); } set { SetAtt<Boolean>(AttributeType.ChangeRequest, value, 1); } }
+        public Boolean ChangePort { get => GetAtt<Boolean>(AttributeType.ChangeRequest, 1); set => SetAtt<Boolean>(AttributeType.ChangeRequest, value, 1); }
 
         /// <summary>源地址</summary>
-        public IPEndPoint SourceAddress { get { return GetAtt<IPEndPoint>(AttributeType.SourceAddress); } set { SetAtt<IPEndPoint>(AttributeType.SourceAddress, value); } }
+        public IPEndPoint SourceAddress { get => GetAtt<IPEndPoint>(AttributeType.SourceAddress); set => SetAtt<IPEndPoint>(AttributeType.SourceAddress, value); }
 
         /// <summary>改变后的地址</summary>
-        public IPEndPoint ChangedAddress { get { return GetAtt<IPEndPoint>(AttributeType.ChangedAddress); } set { SetAtt<IPEndPoint>(AttributeType.ChangedAddress, value); } }
+        public IPEndPoint ChangedAddress { get => GetAtt<IPEndPoint>(AttributeType.ChangedAddress); set => SetAtt<IPEndPoint>(AttributeType.ChangedAddress, value); }
 
         /// <summary>用户名</summary>
-        public String UserName { get { return GetAtt<String>(AttributeType.Username); } set { SetAtt<String>(AttributeType.Username, value); } }
+        public String UserName { get => GetAtt<String>(AttributeType.Username); set => SetAtt<String>(AttributeType.Username, value); }
 
         /// <summary>密码</summary>
-        public String Password { get { return GetAtt<String>(AttributeType.Password); } set { SetAtt<String>(AttributeType.Password, value); } }
+        public String Password { get => GetAtt<String>(AttributeType.Password); set => SetAtt<String>(AttributeType.Password, value); }
 
         /// <summary>错误</summary>
-        public Int32 ErrCode { get { return GetAtt<Int32>(AttributeType.ErrorCode); } set { SetAtt<Int32>(AttributeType.ErrorCode, value); } }
+        public Int32 ErrCode { get => GetAtt<Int32>(AttributeType.ErrorCode); set => SetAtt<Int32>(AttributeType.ErrorCode, value); }
 
         /// <summary>错误</summary>
-        public String ErrReason { get { return GetAtt<String>(AttributeType.ErrorCode); } set { SetAtt<String>(AttributeType.ErrorCode, value); } }
+        public String ErrReason { get => GetAtt<String>(AttributeType.ErrorCode); set => SetAtt<String>(AttributeType.ErrorCode, value); }
 
         /// <summary>服务端从客户端拿到的地址</summary>
-        public IPEndPoint ReflectedFrom { get { return GetAtt<IPEndPoint>(AttributeType.ReflectedFrom); } set { SetAtt<IPEndPoint>(AttributeType.ReflectedFrom, value); } }
+        public IPEndPoint ReflectedFrom { get => GetAtt<IPEndPoint>(AttributeType.ReflectedFrom); set => SetAtt<IPEndPoint>(AttributeType.ReflectedFrom, value); }
 
         /// <summary>服务器名称</summary>
-        public String ServerName { get { return GetAtt<String>(AttributeType.ServerName); } set { SetAtt<String>(AttributeType.ServerName, value); } }
+        public String ServerName { get => GetAtt<String>(AttributeType.ServerName); set => SetAtt<String>(AttributeType.ServerName, value); }
         #endregion
 
         #region 构造
@@ -235,11 +236,13 @@ namespace NewLife.Net.Stun
         {
             if (stream == null) throw new ArgumentNullException("stream");
 
-            var reader = new Binary();
-            reader.Stream = stream;
-            reader.EncodeInt = false;
-            reader.IsLittleEndian = false;
-            reader.UseFieldSize = true;
+            var reader = new Binary
+            {
+                Stream = stream,
+                EncodeInt = false,
+                IsLittleEndian = false,
+                UseFieldSize = true
+            };
 
             var msg = reader.Read<StunMessage>();
 
@@ -262,10 +265,12 @@ namespace NewLife.Net.Stun
         {
             if (stream == null) throw new ArgumentNullException("stream");
 
-            var writer = new Binary();
-            writer.EncodeInt = false;
-            writer.IsLittleEndian = false;
-            writer.UseFieldSize = true;
+            var writer = new Binary
+            {
+                EncodeInt = false,
+                IsLittleEndian = false,
+                UseFieldSize = true
+            };
 
             // 先写特性，为了取得数据长度
             foreach (var att in Atts)
@@ -310,9 +315,9 @@ namespace NewLife.Net.Stun
             var tname = Type.ToString().TrimStart("Binding");
             if (Atts.Count == 0) return tname;
 
-            if (Atts.Count == 1) return "{0} {1}".F(tname, Atts.FirstOrDefault().Value);
+            if (Atts.Count == 1) return $"{tname} {Atts.FirstOrDefault().Value}";
 
-            return "{0}[{1}] {2}".F(tname, Atts.Count, Atts.FirstOrDefault().Value);
+            return $"{tname}[{Atts.Count}] {Atts.FirstOrDefault().Value}";
         }
         #endregion
 

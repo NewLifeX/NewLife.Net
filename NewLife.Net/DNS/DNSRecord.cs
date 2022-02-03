@@ -83,8 +83,9 @@ namespace NewLife.Net.DNS
 
         #region IMemberAccessor 成员
 
-        Boolean IMemberAccessor.Read(IFormatterX fm, MemberInfo member)
+        Boolean IMemberAccessor.Read(IFormatterX fm, AccessorContext context)
         {
+            var member = context.Member;
             if (member.Name == "_Type")
             {
                 Type = fm.Read<DNSQueryType>();
@@ -111,8 +112,11 @@ namespace NewLife.Net.DNS
             return false;
         }
 
-        void IMemberAccessor.Write(IFormatterX fm, MemberInfo member)
+        Boolean IMemberAccessor.Write(IFormatterX fm, AccessorContext context)
         {
+            var member = context.Member;
+
+            return false;
         }
 
         #endregion

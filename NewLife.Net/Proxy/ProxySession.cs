@@ -250,7 +250,7 @@ namespace NewLife.Net.Proxy
                 {
                     var session = this as INetSession;
                     var name = session.Host == null ? "" : session.Host.Name.TrimEnd("Proxy");
-                    _LogPrefix = "{0}[{1}] ".F(name, ID);
+                    _LogPrefix = $"{name}[{ID}] ";
                 }
                 return _LogPrefix;
             }

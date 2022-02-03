@@ -32,7 +32,7 @@ namespace NewLife.Net.Application
             {
                 Log = XTrace.Log;
 
-                LogPrefix = "[{0}]".F(ID);
+                LogPrefix = $"[{ID}]";
 
                 base.Start();
             }
