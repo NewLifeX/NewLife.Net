@@ -1,4 +1,12 @@
-﻿## 网络库历史  
+﻿# NewLife.Net - 网络库组件
+
+![GitHub top language](https://img.shields.io/github/languages/top/newlifex/newlife.net?logo=github)
+![GitHub License](https://img.shields.io/github/license/newlifex/newlife.net?logo=github)
+![Nuget Downloads](https://img.shields.io/nuget/dt/newlife.net?logo=nuget)
+![Nuget](https://img.shields.io/nuget/v/newlife.net?logo=nuget)
+![Nuget (with prereleases)](https://img.shields.io/nuget/vpre/newlife.net?label=dev%20nuget&logo=nuget)
+
+## 网络库历史  
 X组件网络库一共经历了数代：  
 1，2005年，APM模型，反向代理、点卡服务端  
 2，2010年，SAEA模型，P2SP网络，单机7万连接  
