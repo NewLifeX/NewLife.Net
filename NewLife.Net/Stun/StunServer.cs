@@ -225,7 +225,7 @@ namespace NewLife.Net.Stun
 
             var name = Name;
             if (name == GetType().Name) name = GetType().FullName;
-            rs.ServerName = String.Format("{0} v{1}", name, AssemblyX.Create(Assembly.GetExecutingAssembly()).CompileVersion);
+            rs.ServerName = String.Format("{0} v{1}", name, AssemblyX.Create(Assembly.GetExecutingAssembly()).Version);
 
             // 换成另一个
             if (request.ChangePort) session = session2;

@@ -1,21 +1,24 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio Version 16
-VisualStudioVersion = 16.0.29509.3
+# Visual Studio Version 17
+VisualStudioVersion = 17.1.32328.378
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Others", "Others", "{32891F65-FBA1-42B2-918E-61F3A9623F2A}"
 	ProjectSection(SolutionItems) = preProject
 		.editorconfig = .editorconfig
 		.gitignore = .gitignore
+		.github\workflows\publish-beta.yml = .github\workflows\publish-beta.yml
+		.github\workflows\publish.yml = .github\workflows\publish.yml
 		Readme.MD = Readme.MD
 		Doc\SRMP.htm = Doc\SRMP.htm
+		.github\workflows\test.yml = .github\workflows\test.yml
 	EndProjectSection
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "NewLife.Net", "NewLife.Net\NewLife.Net.csproj", "{5A8EF50C-3394-4C1E-99F0-33EFE8691CB0}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "EchoTest", "EchoTest\EchoTest.csproj", "{62396C81-74E5-444E-B27E-687E0A1794C4}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EchoAgent", "EchoAgent\EchoAgent.csproj", "{43C581A2-C376-4145-9029-9916FA1E6D02}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "EchoAgent", "EchoAgent\EchoAgent.csproj", "{43C581A2-C376-4145-9029-9916FA1E6D02}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "HandlerTest", "HandlerTest\HandlerTest.csproj", "{B15BD9DC-3E81-4E36-9F84-A490D73C4482}"
 EndProject
@@ -23,7 +26,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "RpcTest", "RpcTest\RpcTest.
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Benchmark", "Benchmark\Benchmark.csproj", "{C0EF4CA3-7051-4820-9078-4EB18446F24C}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Test", "Test\Test.csproj", "{D9F81F25-4F19-4343-97CA-E8B8ADB20DE6}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Test", "Test\Test.csproj", "{D9F81F25-4F19-4343-97CA-E8B8ADB20DE6}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Samples", "Samples", "{EBC2B92D-E54B-4A64-98F3-4BD9489D22A8}"
 EndProject
