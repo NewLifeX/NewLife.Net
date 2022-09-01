@@ -15,12 +15,12 @@ X组件网络库一共经历了数代：
 5，2020年，物联网，单机400万长连接  
 
 ## 说明文档  
-[NewLife.Net——开始网络编程](https://www.yuque.com/smartstone/blood/net_server)  
-[NewLife.Net——构建可靠的网络服务](https://www.yuque.com/smartstone/blood/net_agent)  
-[NewLife.Net——网络压测单机2266万tps](https://www.yuque.com/smartstone/blood/net_benchmark)  
-[NewLife.Net——管道处理器解决粘包](https://www.yuque.com/smartstone/blood/net_handler)  
-[NewLife.Net——RPC框架NewLife.ApiServer](https://www.yuque.com/smartstone/blood/apiserver)  
-[NewLife.Net——单机400万长连接压力测试](https://www.yuque.com/smartstone/blood/net_100w)  
+[NewLife.Net——开始网络编程](https://newlifex.com/blood/net_server)  
+[NewLife.Net——构建可靠的网络服务](https://newlifex.com/blood/net_agent)  
+[NewLife.Net——网络压测单机2266万tps](https://newlifex.com/blood/net_benchmark)  
+[NewLife.Net——管道处理器解决粘包](https://newlifex.com/blood/net_handler)  
+[NewLife.Net——RPC框架NewLife.ApiServer](https://newlifex.com/blood/apiserver)  
+[NewLife.Net——单机400万长连接压力测试](https://newlifex.com/blood/net_100w)  
 
 ## SRMP协议封包  
 经过十多年实战经验积累以及多方共同讨论，[新生命团队](https://github.com/newlifex)制订了一种简单而又具有较好扩展性的`RPC（Remote Procedure Call）`协议。  
@@ -85,6 +85,8 @@ NewLife.Net压力测试，峰值4.2Gbps，50万pps，消息大小24字节，消�
 |                          NewLife.UWB                          | 2020  |  商用  |    √    | 厘米级高精度室内定位，软硬件一体化，与其它系统联动，大型展厅项目验证                 |
 
 ## 新生命开发团队
+![XCode](https://newlifex.com/logo.png)  
+
 新生命团队（NewLife）成立于2002年，是新时代物联网行业解决方案提供者，致力于提供软硬件应用方案咨询、系统架构规划与开发服务。  
 团队主导的开源NewLife系列组件已被广泛应用于各行业，Nuget累计下载量高达60余万次。  
 团队开发的大数据核心组件NewLife.XCode、蚂蚁调度计算平台AntJob、星尘分布式平台Stardust、缓存队列组件NewLife.Redis以及物联网平台NewLife.IoT，均成功应用于电力、高校、互联网、电信、交通、物流、工控、医疗、文博等行业，为客户提供了大量先进、可靠、安全、高质量、易扩展的产品和系统集成服务。  
@@ -92,10 +94,8 @@ NewLife.Net压力测试，峰值4.2Gbps，50万pps，消息大小24字节，消�
 我们将不断通过服务的持续改进，成为客户长期信赖的合作伙伴，通过不断的创新和发展，成为国内优秀的IT服务供应商。  
 
 `新生命团队始于2002年，部分开源项目具有20年以上漫长历史，源码库保留有2010年以来所有修改记录`  
-网站：https://www.NewLifeX.com  
-开源：https://github.com/NewLifeX  
-教程：https://www.yuque.com/smartstone  
-博客：https://nnhy.cnblogs.com  
+网站：https://newlifex.com  
+开源：https://github.com/newlifex  
 QQ群：1600800/1600838  
 微信公众号：  
-![智能大石头](https://www.newlifex.com/stone.jpg)  
+![智能大石头](https://newlifex.com/stone.jpg)  
