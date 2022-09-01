@@ -3,6 +3,9 @@ name: publish-beta
 on:
   push:
     branches: [ master ]
+    paths:
+        - 'NewLife.Net/**'
+  workflow_dispatch:
 
 jobs:
   build-publish:
@@ -23,5 +26,4 @@ jobs:
         dotnet pack --no-restore --version-suffix $(date "+%Y.%m%d-beta%H%M") -c Release -o out NewLife.Net/NewLife.Net.csproj
     - name: Publish
       run: |
-        dotnet nuget push ./out/*.nupkg --skip-duplicate --source https://nuget.pkg.github.com/NewLifeX/index.json --api-key ${{ github.token }}
         dotnet nuget push ./out/*.nupkg --skip-duplicate --source https://api.nuget.org/v3/index.json --api-key ${{ secrets.nugetKey }}

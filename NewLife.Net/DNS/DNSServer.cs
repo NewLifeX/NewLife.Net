@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using NewLife.Caching;
 using NewLife.Collections;
 using NewLife.Data;
 using NewLife.Log;
@@ -132,7 +133,7 @@ namespace NewLife.Net.DNS
             _Clients = null;
         }
 
-        readonly DictionaryCache<String, DNSEntity> cache = new DictionaryCache<String, DNSEntity>() { Expire = 600/*, Asynchronous = true, CacheDefault = false*/ };
+        readonly ICache _cache = new MemoryCache { Expire = 600/*, Asynchronous = true, CacheDefault = false*/ };
 
         /// <summary>接收处理</summary>
         /// <param name="session"></param>
@@ -189,8 +190,8 @@ namespace NewLife.Net.DNS
             // 读取缓存
             //var rs = cache.GetItem(request.ToString(), k => GetDNS(k, request));
             var key = request.ToString();
-            var rs = cache[key];
-            if (rs == null) cache[key] = rs = GetDNS(key, request);
+            //var rs = _cache[key];
+            if (!_cache.TryGetValue<DNSEntity>(key,out var rs)) _cache[key] = rs = GetDNS(key, request);
 
             // 返回给客户端
             if (rs != null)

@@ -12,13 +12,13 @@ namespace NewLife.Net.Http
         /// <summary>过期时间。单位是秒，默认0秒，表示永不过期</summary>
         public Int32 Expriod { get { return _Expriod; } set { _Expriod = value; } }
 
-        private DictionaryCache<String, HttpCacheItem> _Items;
+        private Dictionary<String, HttpCacheItem> _Items;
         /// <summary>缓存项</summary>
-        private DictionaryCache<String, HttpCacheItem> Items
+        private Dictionary<String, HttpCacheItem> Items
         {
             get
             {
-                if (_Items == null) _Items = new DictionaryCache<String, HttpCacheItem>(StringComparer.OrdinalIgnoreCase) { Expire = Expriod };
+                if (_Items == null) _Items = new Dictionary<String, HttpCacheItem>(StringComparer.OrdinalIgnoreCase) { /*Expire = Expriod*/ };
                 return _Items;
             }
             set { _Items = value; }
