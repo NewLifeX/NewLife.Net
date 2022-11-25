@@ -2,7 +2,7 @@
 
   <PropertyGroup>
     <OutputType>Exe</OutputType>
-    <TargetFramework>net6.0</TargetFramework>
+    <TargetFramework>net7.0</TargetFramework>
     <Deterministic>false</Deterministic>
     <AssemblyVersion>1.1.*</AssemblyVersion>
     <OutputPath>..\Bin\Agent\</OutputPath>
@@ -14,8 +14,8 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="NewLife.Agent" Version="9.3.2022.901" />
-    <PackageReference Include="NewLife.Core" Version="10.0.2022.1001" />
+    <PackageReference Include="NewLife.Agent" Version="10.0.2022.1104" />
+    <PackageReference Include="NewLife.Core" Version="10.0.2022.1101" />
   </ItemGroup>
 
 </Project>

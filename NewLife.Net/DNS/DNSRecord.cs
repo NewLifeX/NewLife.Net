@@ -1,7 +1,5 @@
-﻿using System;
-using System.Reflection;
-using NewLife.Serialization;
-using System.Linq;
+﻿using NewLife.Serialization;
+using NewLife.Serialization.Interface;
 
 namespace NewLife.Net.DNS
 {
