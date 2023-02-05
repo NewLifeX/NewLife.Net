@@ -84,7 +84,7 @@ namespace NewLife.Net.SGIP
             WriteLog("正在登录……");
 
             var session = client as ISocketSession;
-            session.Send(cmd.GetStream().ReadBytes());
+            session.Send(cmd.GetStream().ReadBytes(-1));
             var pk = client.Receive();
             var resp = SGIPEntity.Read(pk.GetStream()) as SGIPResponse;
 
@@ -249,7 +249,7 @@ namespace NewLife.Net.SGIP
             {
                 try
                 {
-                    Client.Send(cmd.GetStream().ReadBytes());
+                    Client.Send(cmd.GetStream().ReadBytes(-1));
                 }
                 catch (Exception ex)
                 {

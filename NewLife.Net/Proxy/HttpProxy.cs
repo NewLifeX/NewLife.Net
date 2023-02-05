@@ -127,7 +127,7 @@ namespace NewLife.Net.Proxy
                         var he = new HttpProxyEventArgs(Request, stream);
                         if (pxy.RaiseEvent(this, EventKind.OnRequestBody, he)) return;
                         //e.Stream = he.Stream;
-                        e.Packet = he.Stream.ReadBytes();
+                        e.Packet = he.Stream.ReadBytes(-1);
 
                         base.OnReceive(e);
 
@@ -156,7 +156,7 @@ namespace NewLife.Net.Proxy
                     var he = new HttpProxyEventArgs(Request, stream);
                     if (pxy.RaiseEvent(this, EventKind.OnRequestBody, he)) return;
                     //e.Stream = he.Stream;
-                    e.Packet = he.Stream.ReadBytes();
+                    e.Packet = he.Stream.ReadBytes(-1);
 
                     base.OnReceive(e);
 
@@ -338,7 +338,7 @@ namespace NewLife.Net.Proxy
                             lock (ms)
                             {
                                 ms.Position = 0;
-                                cs = ms.ReadBytes();
+                                cs = ms.ReadBytes(-1);
                             }
                         }
                         //var cs = citem.Response.GetStream();
@@ -384,7 +384,7 @@ namespace NewLife.Net.Proxy
                             var he = new HttpProxyEventArgs(Response, stream);
                             if (pxy.RaiseEvent(this, EventKind.OnResponseBody, he)) return;
                             //e.Stream = he.Stream;
-                            e.Packet = he.Stream.ReadBytes();
+                            e.Packet = he.Stream.ReadBytes(-1);
 
                             // 如果现在正在缓存之中，那么也罢这些非头部数据一并拷贝到缓存里面
                             if (cacheItem != null)
@@ -427,7 +427,7 @@ namespace NewLife.Net.Proxy
                         if (pxy.RaiseEvent(this, EventKind.OnResponseBody, he)) return;
                         base.OnReceiveRemote(e);
                         //e.Stream = he.Stream;
-                        e.Packet = he.Stream.ReadBytes();
+                        e.Packet = he.Stream.ReadBytes(-1);
 
                         // 如果现在正在缓存之中，那么也罢这些非头部数据一并拷贝到缓存里面
                         if (cacheItem != null)

@@ -194,7 +194,7 @@ namespace NewLife.Net.Http
                     if (stream.Position < stream.Length)
                     {
                         // 可能是结束
-                        var str = stream.ReadBytes().ToStr();
+                        var str = stream.ReadBytes(-1).ToStr();
                         if (str == Environment.NewLine) return;
 
                         IsFinish = false;

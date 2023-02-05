@@ -182,7 +182,7 @@ namespace NewLife.Net.Stun
             var rs = new StunMessage
             {
                 Type = StunMessageType.BindingResponse,
-                TransactionID = request.TransactionID.ReadBytes(),
+                TransactionID = request.TransactionID.ReadBytes(0, -1),
                 MappedAddress = session.Remote.EndPoint
             };
             //rs.SourceAddress = session.GetRelativeEndPoint(remote.Address);

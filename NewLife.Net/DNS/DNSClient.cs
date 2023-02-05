@@ -119,7 +119,7 @@ namespace NewLife.Net.DNS
 
             // 发送请求
             var ms = dns.GetStream(nc.Local.IsTcp);
-            nc.Send(ms.ReadBytes());
+            nc.Send(ms.ReadBytes(-1));
 
             Total++;
 
