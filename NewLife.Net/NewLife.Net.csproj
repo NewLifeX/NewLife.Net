@@ -1,11 +1,11 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
   
   <PropertyGroup>
-    <TargetFrameworks>net40;net45;net461;netstandard2.0;netstandard2.1</TargetFrameworks>
+    <TargetFrameworks>net45;net461;netstandard2.0;netstandard2.1</TargetFrameworks>
     <AssemblyTitle>新生命网络库</AssemblyTitle>
-    <Description>网络通讯基础框架及各种协议实现。旧版NET45请找2021年</Description>
+    <Description>网络通讯基础框架及各种协议实现。</Description>
     <Company>新生命开发团队</Company>
-    <Copyright>版权所有(C) 新生命开发团队 2002~2023</Copyright>
+    <Copyright>版权所有(C) 新生命开发团队 2002~2024</Copyright>
     <VersionPrefix>4.3</VersionPrefix>
     <VersionSuffix>$([System.DateTime]::Now.ToString(`yyyy.MMdd`))</VersionSuffix>
     <Version>$(VersionPrefix).$(VersionSuffix)</Version>
@@ -47,7 +47,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="Microsoft.SourceLink.GitHub" Version="1.1.1">
+    <PackageReference Include="Microsoft.SourceLink.GitHub" Version="8.0.0">
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
@@ -101,12 +101,9 @@
     <Compile Remove="Properties\AssemblyInfo.cs" />
   </ItemGroup>
 
-  <ItemGroup Condition="'$(TargetFramework)'!='net40'">
-    <PackageReference Include="NewLife.Core" Version="10.5.2023.801" />
-    <PackageReference Include="NewLife.Remoting" Version="2.2.2023.707" />
-  </ItemGroup>
-  <ItemGroup Condition="'$(TargetFramework)'=='net40'">
-    <PackageReference Include="NewLife.Core" Version="10.5.2023.801-net40" />
+  <ItemGroup>
+    <PackageReference Include="NewLife.Core" Version="10.9.2024.402" />
+    <PackageReference Include="NewLife.Remoting" Version="2.8.2024.402" />
   </ItemGroup>
 
 </Project>
