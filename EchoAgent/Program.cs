@@ -24,7 +24,7 @@ namespace EchoAgent
         MyNetServer _Server;
         /// <summary>开始服务</summary>
         /// <param name="reason"></param>
-        protected override void StartWork(String reason)
+        public override void StartWork(String reason)
         {
             // 实例化服务端，指定端口，同时在Tcp/Udp/IPv4/IPv6上监听
             var svr = new MyNetServer
@@ -50,7 +50,7 @@ namespace EchoAgent
 
         /// <summary>停止服务</summary>
         /// <param name="reason"></param>
-        protected override void StopWork(String reason)
+        public override void StopWork(String reason)
         {
             _Server.TryDispose();
             _Server = null;

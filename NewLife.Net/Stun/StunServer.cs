@@ -209,7 +209,7 @@ namespace NewLife.Net.Stun
                     }
                     else
                     {
-                        session2 = (server as UdpServer).CreateSession(session.Remote.EndPoint);
+                        session2 = (server as UdpServer).CreateSession(IPAddress.Any, session.Remote.EndPoint);
                         if (session2 != null) break;
                     }
                 }

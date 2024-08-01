@@ -53,8 +53,8 @@ namespace NewLife.Net.Proxy
         {
             // 如果未指定远程协议，则与来源协议一致
             if (RemoteServerUri.Type == 0) RemoteServerUri.Type = Session.Local.Type;
-            // 如果是Tcp，收到空数据时不要断开。为了稳定可靠，默认设置
-            if (Session is TcpSession) (Session as TcpSession).DisconnectWhenEmptyData = false;
+            //// 如果是Tcp，收到空数据时不要断开。为了稳定可靠，默认设置
+            //if (Session is TcpSession) (Session as TcpSession).DisconnectWhenEmptyData = false;
 
             if (Host is ProxyBase proxy && proxy.ConnectRemoteOnStart) StartRemote(new ReceivedEventArgs());
 
@@ -131,8 +131,8 @@ namespace NewLife.Net.Proxy
         protected virtual ISocketClient CreateRemote(ReceivedEventArgs e)
         {
             var client = RemoteServerUri.CreateRemote();
-            // 如果是Tcp，收到空数据时不要断开。为了稳定可靠，默认设置
-            if (client is TcpSession) (client as TcpSession).DisconnectWhenEmptyData = false;
+            //// 如果是Tcp，收到空数据时不要断开。为了稳定可靠，默认设置
+            //if (client is TcpSession) (client as TcpSession).DisconnectWhenEmptyData = false;
 
             return client;
         }
