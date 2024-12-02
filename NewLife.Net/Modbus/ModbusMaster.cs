@@ -16,6 +16,7 @@
 
 using System;
 using System.Threading;
+using NewLife.Data;
 using NewLife.Log;
 
 namespace NewLife.Net.Modbus
@@ -78,7 +79,7 @@ namespace NewLife.Net.Modbus
                 // 预期返回指令长度，传入参数expect没有考虑头部和校验位
                 //var st = Transport as SerialTransport;
                 //if (st != null) st.FrameSize = expect + ModbusEntity.NO_DATA_LENGTH;
-                Transport.Send(buf);
+                Transport.Send((ArrayPacket)buf);
 
                 // lscy 2013-7-29 
                 // 发送后，休眠一段时间，避免设备数据未全部写到串口缓冲区中
@@ -87,12 +88,13 @@ namespace NewLife.Net.Modbus
 
                 // 读取
                 var pk = Transport.Receive();
-                if (pk == null || pk.Count == 0) return null;
+                if (pk == null || pk.Total == 0) return null;
 
                 WriteLog("{0} <= {1}", entity.Function, pk.ToHex());
 
+                buf = pk.ReadBytes();
                 var rs = new ModbusEntity();
-                rs = rs.Parse(pk.Data, pk.Offset, pk.Count);
+                rs = rs.Parse(buf, 0, buf.Length);
                 if (rs == null) return null;
                 if (rs.IsException) throw new ModbusException(rs.Data != null && rs.Data.Length > 0 ? (Errors)rs.Data[0] : 0);
 

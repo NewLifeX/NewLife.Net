@@ -409,7 +409,7 @@ namespace NewLife.Net.Stun
 
         StunMessage Query(ISocketClient client, StunMessage request, IPEndPoint remoteEndPoint)
         {
-            Packet pk = null;
+            IPacket pk = null;
             try
             {
                 if (client.Local.IsTcp)
@@ -429,7 +429,7 @@ namespace NewLife.Net.Stun
                 client.Send(request.ToArray());
 
                 pk = client.Receive();
-                if (pk == null || pk.Count == 0) return null;
+                if (pk == null || pk.Total == 0) return null;
             }
             catch { return null; }
 

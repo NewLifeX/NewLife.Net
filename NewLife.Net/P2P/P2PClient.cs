@@ -2,6 +2,7 @@
 using System.Net;
 using System.Net.Sockets;
 using System.Threading;
+using NewLife.Data;
 using NewLife.Net.Sockets;
 using NewLife.Security;
 

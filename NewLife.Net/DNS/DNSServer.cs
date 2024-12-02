@@ -134,7 +134,7 @@ public class DNSServer : NetServer
     /// <summary>接收处理</summary>
     /// <param name="session"></param>
     /// <param name="pk"></param>
-    protected override void OnReceive(INetSession session, Packet pk)
+    protected override void OnReceive(INetSession session, IPacket pk)
     {
         var isTcp = session.Session.Local.IsTcp;
 
