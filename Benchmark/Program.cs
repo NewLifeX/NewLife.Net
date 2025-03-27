@@ -68,7 +68,7 @@ internal class Program
         if (txt.IsNullOrEmpty()) txt = cfg.Content = "学无先后达者为师";
 
         var buf = txt.StartsWith("0x") ? txt.TrimStart("0x").ToHex() : txt.GetBytes();
-        var pk = new Packet(buf);
+        var pk = new ArrayPacket(buf);
 
         // 绑定集合
         var binds = new List<(IPAddress, NetUri)>();
@@ -104,7 +104,7 @@ internal class Program
         Console.WriteLine("目标：{0}", uri);
         Console.WriteLine("请求：{0:n0}", cfg.Times);
         Console.WriteLine("并发：{0:n0}", cfg.ConcurrentLevel);
-        Console.WriteLine("内容：[{0:n0}] {1}", pk.Count, txt);
+        Console.WriteLine("内容：[{0:n0}] {1}", pk.Length, txt);
 
         if (cfg.Interval > 0) Console.WriteLine("间隔：{0:n0}", cfg.Interval);
         if (!cfg.Bind.IsNullOrEmpty())
@@ -151,9 +151,9 @@ internal class Program
         Console.WriteLine("速度：{0:n0}tps", total * 1000L / ms);
     }
 
-    private static readonly ConcurrentHashSet<Type> _LastErrors = new ConcurrentHashSet<Type>();
+    private static readonly ConcurrentHashSet<Type> _LastErrors = new();
 
-    private static async Task<Int32> WorkOneAsync(IPEndPoint local, NetUri uri, Config cfg, Packet pk)
+    private static async Task<Int32> WorkOneAsync(IPEndPoint local, NetUri uri, Config cfg, IPacket pk)
     {
         var count = 0;
         try

@@ -4,30 +4,29 @@ using NewLife.Log;
 using NewLife.Model;
 using NewLife.Net;
 
-namespace HandlerTest
+namespace HandlerTest;
+
+class EchoHandler : Handler
 {
-    class EchoHandler : Handler
+    /// <summary>性能计数器</summary>
+    public ICounter Counter { get; set; }
+
+    public override Object Read(IHandlerContext context, Object message)
     {
-        /// <summary>性能计数器</summary>
-        public ICounter Counter { get; set; }
+        var ctx = context as NetHandlerContext;
+        var session = ctx.Session;
 
-        public override Object Read(IHandlerContext context, Object message)
-        {
-            var ctx = context as NetHandlerContext;
-            var session = ctx.Session;
+        // 性能计数
+        Counter?.Increment(1, 0);
 
-            // 性能计数
-            Counter?.Increment(1, 0);
-
-            var pk = message as Packet;
+        var pk = message as IPacket;
 #if DEBUG
-            session.WriteLog("收到：{0}", pk.ToStr());
+        session.WriteLog("收到：{0}", pk.ToStr());
 #endif
 
-            // 把收到的数据发回去
-            session.SendMessage(pk);
+        // 把收到的数据发回去
+        session.SendMessage(pk);
 
-            return null;
-        }
+        return null;
     }
 }
