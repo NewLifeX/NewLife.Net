@@ -14,8 +14,8 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="NewLife.Agent" Version="10.13.2025.604" />
-    <PackageReference Include="NewLife.Core" Version="11.6.2025.801" />
+    <PackageReference Include="NewLife.Agent" Version="10.13.2025.901" />
+    <PackageReference Include="NewLife.Core" Version="11.6.2025.901" />
   </ItemGroup>
 
 </Project>
