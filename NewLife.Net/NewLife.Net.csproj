@@ -5,7 +5,7 @@
     <AssemblyTitle>新生命网络库</AssemblyTitle>
     <Description>网络通讯基础框架及各种协议实现。</Description>
     <Company>新生命开发团队</Company>
-    <Copyright>版权所有(C) 新生命开发团队 2002~2025</Copyright>
+    <Copyright>版权所有(C) 新生命开发团队 2002~2026</Copyright>
     <VersionPrefix>4.4</VersionPrefix>
     <VersionSuffix>$([System.DateTime]::Now.ToString(`yyyy.MMdd`))</VersionSuffix>
     <Version>$(VersionPrefix).$(VersionSuffix)</Version>
@@ -104,8 +104,8 @@
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="NewLife.Core" Version="11.8.2025.1112" />
-    <PackageReference Include="NewLife.Remoting" Version="3.5.2025.1001" />
+    <PackageReference Include="NewLife.Core" Version="11.10.2026.101" />
+    <PackageReference Include="NewLife.Remoting" Version="3.7.2026.102" />
   </ItemGroup>
 
 </Project>
